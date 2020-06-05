@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+@using Sikiro.Web.Admin.Permission
+@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.Administrator.ListSearchParams>
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <layuiInput class="layui-col-md3" asp-for="Params.UserName" text="登录名" placeholder="请输入" />
+
+                <layuiInput class="layui-col-md3" asp-for="Params.RealName" text="姓名" placeholder="请输入" />
+
+                <layuiSelect class="layui-col-md3" asp-for="Params.Type " text="账号类型" defaultText="请选择" />
+
+                <layuiSelect class="layui-col-md3" asp-for="Params.Status " text="状态" defaultText="请选择" />
+
+            </div>
+
+            <div class="layui-form-item">
+
+                <layuiSelect class="layui-col-md3" asp-for="Params.DepartmentId " url="/Department/DepartmentSelect" text="部门" defaultText="请选择" />
+
+                <layuiSelect class="layui-col-md3" asp-for="Params.RoleId" url="/Role/RoleSelect" text="角色" defaultText="请选择" />
+
+                <layuiSelect class="layui-col-md3" asp-for="Params.PositionId" url="/Position/PositionSelect" text="岗位" defaultText="请选择" />
+
+                <layuiTableFreshButton style="margin-left: 50px" id="btn-submit" targetFormId="admin-table" />
+
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton id="btn-add" class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Administrator_Add.GetHashCode()">添加</LayuiButton>
+                <LayuiButton id="btn-status" class="layui-btn layuiadmin-btn-admin" PermCode="@PermCode.Administrator_BatchSetStatus.GetHashCode()">批量设置状态</LayuiButton>
+            </div>
+
+            <layuiTable multiple="Checkbox" PermCode="@PermCode.Administrator_List.GetHashCode()" id="admin-table" lay-filter="admin-table" toolbar="admin-toolBar" toolbarweight="260" colsModel="typeof(AdministratorListVo)" asp-action="List" asp-controller="Administrator" />
+
+            <script type="text/html" id="admin-toolBar">
+                {{#  if(d.statusForInt != -1){ }}
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_Edit.GetHashCode()" lay-event="edit">编辑</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_ResetPassword.GetHashCode()" lay-event="reset">重置密码</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_Jurisdiction.GetHashCode()" lay-event="setperm">分配权限</LayuiButton>
+                {{# } }}
+                {{#  if(d.statusForInt == 1){ }}
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-danger layui-btn-mini" PermCode="@PermCode.Administrator_Stop.GetHashCode()" lay-event="stop">停用</LayuiButton>
+                {{# }else if (d.statusForInt == 0 || d.statusForInt == -20||d.statusForInt == -1){ }}
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-danger layui-btn-mini" PermCode="@PermCode.Administrator_Open.GetHashCode()" lay-event="open">启用</LayuiButton>
+                {{# } }}
+            </script>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script>
+        $(function () {
+            var stop = function (id) {
+                $.confirmPost("/administrator/stop", { userId: id }, function () {
+                    $("#btn-submit").click();
+                });
+            }
+
+            var open = function (id) {
+                $.confirmPost("/administrator/open", { userId: id }, function () {
+                    $("#btn-submit").click();
+                });
+            }
+
+            var edit = function (id) {
+                $.openLayer("编辑管理员", "/administrator/edit?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 480, 580);
+            }
+
+            var reset = function (id) {
+                $.openLayer("重置密码", "/administrator/ResetPassword?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 480, 200);
+            }
+            var setperm = function (id) {
+                $.openLayer("分配权限", "/administrator/Jurisdiction?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 800, 500);
+            }
+
+            var batchSetStatus = function (ids) {
+                var value = jQuery.param({ id: ids }, true);
+                $.openLayer("批量设置状态", "/administrator/BatchSetStatus?" + value, function () {
+                    $("#btn-submit").click();
+                }, 480, 400);
+            }
+
+
+            table.on('tool(admin-table)',
+                function (obj) {
+                    var data = obj.data;
+
+                    if (obj.event === 'edit') {
+                        edit(data.id);
+                    } else if (obj.event === 'stop') {
+                        stop(data.id);
+                    } else if (obj.event === 'open') {
+                        open(data.id);
+                    } else if (obj.event === 'reset') {
+                        reset(data.id);
+                    } else if (obj.event === 'setperm') {
+                        setperm(data.id);
+                    }
+                });
+
+            $("#btn-add").on("click", function () {
+                $.openLayer("新增管理员", "/administrator/add", function () {
+                    $("#btn-submit").click();
+                }, 480, 630);
+            });
+
+            $("#btn-status").on("click", function () {
+                var data = layui.table.checkStatus('admin-table').data;
+                if (data.length <= 0) {
+                    layer.msg("请选择需要操作的数据", {
+                        icon: 2
+                        , time: 2000
+                    });
+                    return;
+                }
+                var ids = data.arrayColumn('id');
+                batchSetStatus(ids);
+            });
+        });
+
+    </script>
+}
+
+

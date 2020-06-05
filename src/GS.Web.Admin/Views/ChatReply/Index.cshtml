@@ -1,0 +1,126 @@
+﻿@using Sikiro.Web.Admin.Permission
+@{
+    ViewData["Title"] = "Index";
+
+}
+
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <layuitablefreshbutton id="btn-submit" targetformid="ChatReply-table" />
+            </div>
+        </div>
+
+        <div class="layui-card-body" id="ChatReply">
+
+            <div style="padding-bottom: 10px;">
+                <a class="layui-btn layui-admin-btn-admin" data-type="add" id="ChatReplyAdd" PermCode="@PermCode.ChatReply_Add.GetHashCode()">添加</a>
+                <a class="layui-btn layui-admin-btn-admin" id="ChatReplyBatchDel" PermCode="@PermCode.ChatReply_batchDele.GetHashCode()">批量删除</a>
+                <a class="layui-btn layui-admin-btn-admin" id="ChatReplyType" PermCode="@PermCode.ChatReply_TypeAdd.GetHashCode()">添加预计类型</a>
+            </div>
+            
+            <layuiTable id="ChatReply-table" lay-filter="ChatReply-table" toolbar="admin-toolBar" colsModel="typeof(ChatReplyModel)" asp-action="List" asp-controller="ChatReply" multiple="Checkbox" PermCode="@PermCode.ChatReply_List.GetHashCode()"/>
+
+            <script type="text/html" id="admin-toolBar">
+                <div class="layui-btn-container">
+                    <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="edit" PermCode="@PermCode.ChatReply_Edit.GetHashCode()">编辑</LayuiButton>
+                    <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.ChatReply_Dele.GetHashCode()">删除</LayuiButton>
+                </div>
+            </script>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+
+
+        $(function() {
+
+
+            var batchDeletePost = function(id) {
+                $.Delete("/ChatReply/BatchDeleteAJax",
+                    { ids: id },
+                    function() {
+                        $("#btn-submit").click();
+                    });
+            }
+
+            var deletePost = function(id) {
+                $.Delete("/ChatReply/DeleteAJax",
+                    { id: id },
+                    function() {
+                        $("#btn-submit").click();
+                    });
+            }
+
+            var edit = function(id) {
+                $.openLayer("编辑产品时效",
+                    "/ChatReply/Edit?id=" + id,
+                    function() {
+                        $("#btn-submit").click();
+                    }, 480, 480);
+            }
+
+
+            $('#ChatReply #ChatReplyAdd').on("click",
+                function() {
+                    $.openLayer("新增",
+                        "/ChatReply/Add",
+                        function() {
+                            $("#btn-submit").click();
+                        }, 480, 480);
+                });
+
+            $('#ChatReply #ChatReplyType').on("click",
+                function() {
+                    $.openLayer("添加预计类型",
+                        "/ChatReply/AddType",
+                        function() {
+                            $("#btn-submit").click();
+                        }, 480,200);
+                });
+
+
+            $('#ChatReply #ChatReplyBatchDel').on("click",
+                function() {
+                    var t = table.checkStatus('ChatReply-table');
+                    var list = [];
+                    for (var i = 0; i < t.data.length; i++) {
+                        list.push(t.data[i].id);
+                    }
+                    if (list||list.count <= 0) {
+                        layer.msg("请选择要删除的项",
+                            {
+                                icon: 0,
+                                time: 2000
+                            });
+                        return;
+                    }
+
+                    batchDeletePost(list);
+                });
+
+            //头工具栏事件
+            table.on('tool(ChatReply-table)',
+                function(obj) {
+                    var data = obj.data;
+                    if (obj.event === 'edit') {
+                        edit(data.id);
+
+                    } else if (obj.event === 'del') {
+                        deletePost(data.id);
+                    }
+                });
+
+        });
+
+
+    </script>
+}

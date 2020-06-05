@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Sikiro.Service.System.Bo.MenuBo>
+@if (Model.Any())
+{
+    <dl class="layui-nav-child">
+        @foreach (var item in Model)
+        {
+            <dd>
+                <a href="javascript:;" @(string.IsNullOrWhiteSpace(item.Url) || item.Children.Any() ? "" : $"lay-href={item.Url}")>
+                    <i class="layui-icon @item.Icon"></i>
+                    <cite>@item.Name</cite>
+                </a>
+                <partial name="_MenuList" model="item.Children" />
+            </dd>
+        }
+    </dl>
+}

@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+@using Sikiro.Web.Admin.Permission
+@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.Shopping.ShoppingParams>
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+}
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <layuiInput asp-for="Params.ProductName" text="产品名称" placeholder="请输入" />
+                <layuiTableFreshButton id="btn-submit" targetFormId="Shopping-table" />
+            </div>
+        </div>
+
+        <div class="layui-card-body" id="produts">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Shopping_Add.GetHashCode()">添加</LayuiButton>
+            </div>
+
+            <layuiTable id="Shopping-table" lay-filter="Shopping-table" toolbar="admin-toolBar" colsModel="typeof(ShoppingModel)" asp-action="List" asp-controller="Shopping"  PermCode="@PermCode.Shopping_list.GetHashCode()"/>
+
+            <script type="text/html" id="admin-toolBar">
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="edit" PermCode="@PermCode.Shopping_Edit.GetHashCode()">编辑</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Shopping_Dele.GetHashCode()">删除</LayuiButton>
+            </script>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script>
+        $(function () {
+
+            var deletePost = function (id) {
+                $.Delete("/Shopping/DeleAJax", { id: id }, function () {
+                    $("#btn-submit").click();
+                });
+            }
+            var edit = function (id) {
+                $.openLayer("编辑微商城", "/Shopping/Edit?id=" + id, function () {
+                    $("#btn-submit").click();
+                },580,580);
+            }
+
+            table.on('tool(Shopping-table)',
+                function (obj) {
+                    var data = obj.data;
+
+                    if (obj.event === 'edit') {
+                        edit(data.id);
+                    }
+                    else if (obj.event === 'del') {
+                        deletePost(data.id);
+                    }
+                });
+
+            $('#produts .layui-btn').on("click", function () {
+                $.openLayer("新增微商城", "/Shopping/Add", function () {
+                    $("#btn-submit").click();
+                }, 580, 580);
+            });
+        });
+
+
+
+
+
+    </script>
+}

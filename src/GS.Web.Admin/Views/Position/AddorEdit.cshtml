@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "AddorEdit";
+;
+}
+@model Sikiro.Web.Admin.Models.Position.AddorEditPosition
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Position" asp-action="AddorEditAJax" style="padding: 20px">
+
+    <input asp-for="Id" type="hidden" />
+    <layuiFormEdit asp-for="Name" />
+    <layuiFormEdit asp-for="Order" type="number" />
+
+    <layuiFormEdit asp-for="Remark" />
+
+
+</layuiForm>

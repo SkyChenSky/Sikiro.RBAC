@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+}
+@model Sikiro.Web.Admin.Models.Administrator.EditVo
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Administrator" asp-action="Edit" style="padding: 20px">
+
+    <input asp-for="Id" type="hidden" />
+
+    <layuiFormEdit asp-for="UserName" />
+
+    <layuiFormEdit asp-for="RealName" />
+
+    <layuiFormEdit asp-for="Phone" />
+
+    <layuiSelect asp-for="CompanyId" url="/Company/CompanySelect" defaultText="请选择" input-display="LayuiFormItem" />
+
+    <layuiSelect asp-for="DepartmentId" url="/Department/DepartmentSelect" defaultText="请选择" input-display="LayuiFormItem" />
+
+    <layuiMultiSelect asp-for="PositionIds" url="/Position/PositionSelect" defaultText="请选择" input-display="LayuiFormItem" />
+
+    <layuiSelect asp-for="Status" input-display="LayuiFormItem" />
+
+    <layuiMultiSelect asp-for="RoleIds" url="/Role/RoleSelect" defaultText="请选择" input-display="LayuiFormItem" />
+
+    <layuiSelect asp-for="Type" input-display="LayuiFormItem" />
+
+</layuiForm>

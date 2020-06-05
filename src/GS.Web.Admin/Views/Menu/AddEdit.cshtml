@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+@section Head
+    {
+    <style>
+
+        .selectIcon {
+            overflow: auto;
+            float: left;
+            text-align: center;
+            box-sizing: border-box;
+            color: rgb(0,150,136);
+            border-radius: 50px;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            overflow: hidden;
+        }
+
+            .selectIcon.active {
+                border: 2px solid rgb(0,150,136);
+                box-sizing: border-box;
+                line-height: 26px;
+            }
+    </style>
+}
+@model Sikiro.Web.Admin.Models.Menu.AddEditModel
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Menu" asp-action="AddEdit" style="padding: 20px">
+
+    <input asp-for="Id" type="hidden" />
+
+    <layuiSelect asp-for="ParentId" data="@ViewBag.MenuList" input-display="LayuiFormItem" text="上一级菜单" defaultText="请选择" />
+
+    <layuiFormEdit asp-for="Name" />
+
+    <layuiFormEdit asp-for="Url" />
+
+    <layuiFormEdit asp-for="Order" type="number" />
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">菜单图标</label>
+        <div class="layui-input-block">
+            @foreach (var item in (List<string>)ViewBag.IconList)
+            {
+                <div class="selectIcon @((Model != null && Model.Icon == item) ? Html.Raw("active") : Html.Raw(""))">
+                    <div class="layui-icon @item"></div>
+                    <input type="radio" name="Icon" checked="checked" value="@item" @(Model != null && Model.Icon == item ? "checked" : "")>
+                </div>
+            }
+        </div>
+    </div>
+</layuiForm>
+
+@section Scripts
+    {
+    <script>
+
+        $(".selectIcon").click(function () {
+            $("[name=radio]").removeProp("checked");
+            $(".selectIcon").removeClass("active");
+            $(this).addClass("active");
+            $(this).find("input").prop("checked", "checked");
+        })
+
+    </script>
+}

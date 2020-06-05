@@ -1,0 +1,121 @@
+﻿@using Sikiro.Web.Admin.Permission
+@{
+    ViewData["Title"] = "Index";
+}
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all" asp-append-version="true">
+}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">搜索</label>
+                    <div class="layui-input-block">
+                        <input id="edt-search" type="text" placeholder="输入关键字" class="layui-input" />
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button id="btn-search" class="layui-btn layuiadmin-btn-admin" lay-submit lay-filter="LAY-user-back-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton id="btn-add" class="layui-btn layuiadmin-btn-admin" PermCode="@PermCode.Department_AddEdit.GetHashCode()" data-type="add">添加</LayuiButton>
+            </div>
+
+            <table id="department-table" class="layui-table" lay-filter="department-table" PermCode="@PermCode.Department_List.GetHashCode()"></table>
+            <script type="text/html" id="oper-col">
+                {{# if(d.isDepartment){ }}
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Department_AddEdit.GetHashCode()" lay-event="edit">编辑</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" PermCode="@PermCode.Department_Delete.GetHashCode()" lay-event="del">删除</LayuiButton>
+                {{# } }}
+            </script>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script>
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        var renderTable = function() {
+            layer.load(2);
+            treetable.render({
+                treeColIndex: 1,
+                treeDefaultClose: false,
+                treeLinkage: false,
+                treeSpid: "",
+                treeIdName: 'id',
+                treePidName: 'pId',
+                elem: '#department-table',
+                url: '/Department/List',
+                page: false,
+                cols: [
+                    [
+                        { field: 'isDepartment', width: 120, align: 'center', templet: "#oper-col", title: '操作' },
+                        { field: 'name', minWidth: 200, title: '权限名称' },
+                    ]
+                ],
+                done: function (res, curr, count) {
+                    layer.closeAll('loading');
+                    if(res.error && res.data && res.data.status == 403){
+                        window.location.href = '/home/error?value=' + res.message;
+                    }
+                }
+            });
+        }
+
+        renderTable();
+
+
+        $("#btn-add").on("click",
+            function() {
+                $.openLayer("新增组织机构",
+                    "/Department/AddEdit",
+                    function() {
+                        renderTable();
+                    },
+                    480,360);
+            });
+
+        var del = function(id) {
+            $.Delete("/Department/Delete",
+                { id: id },
+                function() {
+                    renderTable();
+                });
+        };
+        var edit = function(id) {
+            $.openLayer("编辑组织机构",
+                "/Department/AddEdit?id=" + id,
+                function() {
+                    renderTable();
+                },
+                480,360);
+        };
+
+        table.on('tool(department-table)',
+            function(obj) {
+                var data = obj.data;
+                if (obj.event === 'edit') {
+                    edit(data.id);
+                } else if (obj.event === 'del') {
+                    del(data.id);
+                }
+            });
+
+        $('#btn-search').click(function() {
+            var keyword = $('#edt-search').val();
+            $("#department-table").treeTableSearch(keyword);
+        });
+    </script>
+}

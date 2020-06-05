@@ -1,0 +1,340 @@
+﻿@using Sikiro.Web.Admin.Permission
+@{
+    ViewData["Title"] = "null";
+
+}
+@section Head{
+
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="/layuiadmin/style//template.css?v=20" />
+    <style>
+        .caller-fr {
+            margin-left: 10px;
+        }
+
+        .caller-other {
+            width: 20%;
+            height: 80px;
+            display: flex;
+            position: relative;
+            margin-left: 20px;
+            align-items: center;
+        }
+
+        .caller-progress {
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        .list-search {
+            width: 300px;
+            float: right;
+            overflow: auto;
+            position: relative;
+            padding: 0;
+        }
+
+            .list-search .layui-icon {
+                right: 8px;
+                position: absolute;
+                top: 8px;
+            }
+    </style>
+
+}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">最近联系</li>
+                    <li>查询</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div class="layadmin-caller" style="padding: 0;">
+                                <div class="layui-row">
+                                    <div class="layui-col-md9">
+                                        <button class="layui-btn layui-btn-primary searchToday" id="searchToday">今天</button>
+                                        <button class="layui-btn layui-btn-primary searchYesterday" id="searchYesterday">昨天</button>
+                                        <button class="layui-btn layui-btn-primary searchWeek" id="searchWeek">本周</button>
+                                    </div>
+                                    <div class="layui-col-md3">
+                
+                           
+                                    </div>
+                                </div>
+
+
+
+                            <div class="caller-contar">
+                                <script id="demo1" type="text/html">
+                                    {{#  layui.each(d, function(index, item){ }}
+                                    <div class="caller-item">
+                                        <img src="{{item.userLogo}}" alt="" class="caller-img caller-fl" style=" height:80px; width:80px">
+                                        <div class="caller-main caller-fl" style="min-width:150px;padding-right:20px">
+                                            <p>用户名称：<strong>{{item.userName?item.userName:"未绑定" }}</strong> <!-- <em>最近联系：1 小时前</em> --></p>
+
+
+                                            <p class="caller-adds">手机号：{{item.phone?item.phone:"未绑定" }}</p>
+                                            <div class="caller-iconset">微信名称：{{item.openId!=''?item.nickName:"未绑定" }} </div>
+
+                                        </div>
+                                        <div class="caller-other caller-fl">
+                                            <span>资料完整度</span>
+                                            <div class="caller-progress">
+                                                <div class="layui-progress">
+                                                    <div class="layui-progress-bar " lay-percent="{{item.progress}}%" style="width:{{item.progress}}%;"></div>
+
+                                                </div>
+                                            </div>
+                                            <span>{{item.progress}}%</span>
+                                        </div>
+                                    </div>
+                                    {{#  });}}
+                                </script>
+
+                                <div id="view1"></div>
+
+                            </div>
+                            <div id="demo8"></div>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="layadmin-caller" style="padding: 0;">
+
+                                <div class="layui-row">
+                                    <div class="layui-col-md9">
+                                        <div class="layui-inline">
+                                            <label class="layui-form-label">注册日期</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" class="layui-input" id="test-laydate-range-date" placeholder=" - " lay-key="44">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-md3">
+                                        <button id="btn-submit" type="button" class="layui-btn layuiadmin-btn-admin" style="float:right;">
+                                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                        </button>
+                                        <div class="list-search">
+                                            <input type="text" name="title" placeholder="请输入用户名称/手机/微信" autocomplete="off" class="layui-input " id="userName">
+                               
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <div class="caller-contar">
+
+
+                                <script id="demo" type="text/html">
+                                    {{#  layui.each(d, function(index, item){ }}
+                                    <div class="caller-item">
+                                        <img src="{{item.userLogo}}" alt="" class="caller-img caller-fl"style=" height:80px; width:80px">
+                                        <div class="caller-main caller-fl" style="min-width:150px;padding-right:20px">
+                                            <p>用户名称：<strong>{{item.userName?item.userName:"未绑定" }}</strong> <!-- <em>最近联系：1 小时前</em> --></p>
+
+                                            <p class="caller-adds">手机号：{{item.phone?item.phone:"未绑定" }}</p>
+
+
+                                            <div class="caller-iconset">微信名称：{{item.openId!=''?item.nickName:"未绑定" }} </div>
+
+
+                                        </div>
+                                        <div class="caller-other caller-fl">
+                                            <span>资料完整度</span>
+                                            <div class="caller-progress">
+                                                <div class="layui-progress">
+                                                    <div class="layui-progress-bar " lay-percent="{{item.progress}}%" style="width:{{item.progress}}%;"></div>
+                          
+                                                </div>
+                                            </div>
+                                            <span>{{item.progress}}%</span>
+                                        </div>
+                                        <div class="caller-other caller-fl">
+
+                                            {{# if(item.userStatus==1){}}
+                                            <span class="layui-btn-warm layui-btn-sm caller-fr layui-bg-red">已启用</span>
+                                            {{#  }else if(item.userStatus==0) { }}
+                                            <span class="layui-btn-warm layui-btn-sm caller-fr layui-bg-red">已停用</span>
+                                            {{#  }; }}
+
+                                        </div>
+                                        {{# if(item.userStatus==0){}}
+                                        <LayuiButton type="button" class="layui-btn layui-btn-warm layui-btn-sm caller-fr" data-itemid="{{item.id}}" onclick="openAJax('{{ item.id }}')"  PermCode="@PermCode.Info_Open.GetHashCode()">启用</LayuiButton>
+                                        {{#  }else if(item.userStatus==1) { }}
+                                        <LayuiButton type="button" class="layui-btn layui-btn-warm layui-btn-sm caller-fr" data-itemid="{{item.id}}" onclick="stopAJax('{{ item.id }}')"  PermCode="@PermCode.Info_Stop.GetHashCode()">停用</LayuiButton>
+                                        {{#  }; }}
+                                    </div>
+                                    {{#  });}}
+                                </script>
+
+                                <div id="view"></div>
+
+                            </div>
+                            <div id="demo7"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+
+
+        var laytpl = layui.laytpl;
+        var laypage = layui.laypage;
+        var laydate = layui.laydate;
+        var element = layui.element;
+        var layer = layui.layer;
+        var page = 1;
+        var limit = 10;
+        laydate.render({
+            elem: '#test-laydate-range-date'
+        });
+        function stopAJax(id)
+        {
+            $.ajax({
+                type: "post",
+                url: "/info/StopAJax",
+                data: { id: id, status:0 },
+                async: true,
+                success: function (data)
+                {
+
+                    if (data.success) {
+                        $("#btn-submit").click();
+                    }
+                }
+            });
+        }
+        function openAJax(id) {
+            $.ajax({
+                type: "post",
+                url: "/info/OpenAJax",
+                data: { id: id, status:1 },
+                async: true,
+                success: function (data) {
+                    if (data.success) {
+                        $("#btn-submit").click();
+                    }
+                }
+            });
+        }
+        DataAjax(1, page, limit, "", "", laypage, laytpl,"demo7");
+        DataAjax(2, page, limit, "", "", laypage, laytpl,"demo8")
+        $(function () {
+            $("#btn-submit").click(function () {
+                var userName = $("#userName").val();
+                var date = $("#test-laydate-range-date").val();
+                DataAjax(1, page, limit, userName, date, laypage, laytpl,"demo7");
+            });
+
+            $("#searchToday").click(function () {
+
+                DataAjax(2, page, limit, "", 0, laypage, laytpl,"demo8");
+            });
+            $("#searchYesterday").click(function () {
+                DataAjax(2, page, limit, "", 1, laypage, laytpl, "demo8");
+            });
+
+            $("#searchWeek").click(function () {
+                DataAjax(2, page, limit, "", 2, laypage, laytpl, "demo8");
+            });
+        });
+
+  
+
+        function DataAjax(type, page, limit, userName, date, laypage, laytpl, elem, view)
+        {
+            Loading();
+            if (type == 1) {
+
+                var data = { page: page, limit: limit, userName: userName, date: date };
+                var url = "/info/list";
+            }
+            else
+            {
+                var data = { page: page, limit: limit, date: date };
+                var url = "/info/RelationList";
+            }
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: data,
+                async: true,
+                success: function (data) {
+                    clostLoading();
+                    if (data.code == 0) {
+                        laypage.render({
+                            elem: elem
+                            , count: data.count
+                            , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                            , jump: function (obj, first) {
+                                $.ajax({
+                                    type: "post",
+                                    url: url,
+                                    data: { page: obj.curr, limit: obj.limit, userName: userName, date: date },
+                                    async: true,
+                                    success: function (data) {
+                                        if (type == 1) {
+
+                                            var data = data.data;
+                                            var getTpl = demo.innerHTML;
+                                            var view =document.getElementById('view');
+                                            laytpl(getTpl).render(data, function (html) {
+                                                view.innerHTML = '';
+                                                view.innerHTML = html;
+                                            });
+                                        }
+                                        else
+                                        {
+                                            var data = data.data;
+                                            var getTp = demo1.innerHTML;
+                                            var view = document.getElementById('view1');
+                                            laytpl(getTp).render(data, function (html) {
+                                                view.innerHTML = '';
+                                                view.innerHTML = html;
+                                            });
+                                        }
+                           
+
+
+
+                                    }
+                                });//end
+
+                            }
+
+                        });
+
+                    }
+
+                },
+                complete: function () {
+                    clostLoading();
+                }
+
+            });
+        }
+
+
+        function Loading()
+        {
+            layer.load(1, {
+                shade: [0.5, '#000'],
+                time: 1000,
+                isOutAnim: false,
+                anim: -1,
+            })
+        }
+        function clostLoading()
+        {
+            layer.close();
+
+        }
+
+    </script>
+</div>

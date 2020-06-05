@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Addtype";
+
+
+
+}
+@model Sikiro.Web.Admin.Models.ChatReply.AddChatReplyType
+
+<style>
+    .layui-table, .layui-table-view {
+        margin: 10px auto;
+    }
+</style>
+<layuiForm id="layuiadmin-form-admin" asp-controller="ChatReply" asp-action="AddTypeAjax" style="padding: 20px">
+
+    <layuiFormEdit asp-for="News"  text="预计类型"/>
+
+
+</layuiForm>

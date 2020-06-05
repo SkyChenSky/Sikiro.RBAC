@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GS.Common.Utils\Sikiro.Common.Utils.csproj" />
+    <ProjectReference Include="..\GS.Entity.System\Sikiro.Entity.System.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+@model Sikiro.Web.Admin.Models.Department.AddEditModel;
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Department" asp-action="AddEdit" style="padding: 20px;">
+
+    <input asp-for="Id" type="hidden" />
+
+    <layuiSelect asp-for="ParentId" text="上级部门" data="@ViewBag.DepartmentSelet" input-display="LayuiFormItem" defaultText="请选择" />
+
+    <layuiFormEdit asp-for="Name" text="部门名称" />
+
+    <layuiFormEdit asp-for="Order" text="部门排序" type="number" />
+
+</layuiForm>
+

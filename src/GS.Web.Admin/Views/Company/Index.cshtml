@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+@using Sikiro.Web.Admin.Permission
+@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.Company.CompanyParams>
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+}
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <layuiInput asp-for="Params.CompanyName" text="商户名称" placeholder="请输入" />
+                <layuiTableFreshButton id="btn-submit" targetFormId="Company-table" />
+            </div>
+        </div>
+
+        <div class="layui-card-body" id="produts">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Company_AddorEdit.GetHashCode()">添加</LayuiButton>
+            </div>
+
+            <layuiTable id="Company-table" lay-filter="Company-table" toolbar="admin-toolBar" colsModel="typeof(CompanyModel)" asp-action="List" asp-controller="Company" PermCode="@PermCode.Company_list.GetHashCode()" />
+
+            <script type="text/html" id="admin-toolBar">
+
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="edit" PermCode="@PermCode.Company_AddorEdit.GetHashCode()">编辑</LayuiButton>
+
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Company_Dele.GetHashCode()">删除</LayuiButton>
+
+            </script>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script>
+        $(function () {
+
+            var deletePost = function (id) {
+                $.Delete("/Company/DeleAJax", { id: id }, function () {
+                    $("#btn-submit").click();
+                });
+            }
+
+
+            var edit = function (id) {
+                $.openLayer("编辑商户", "/Company/AddorEdit?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 480, 480)
+            }
+
+            table.on('tool(Company-table)',
+                function (obj) {
+
+                    var data = obj.data;
+
+                    if (obj.event === 'edit') {
+                        edit(data.id);
+                    }
+                    else if (obj.event === 'del') {
+                        deletePost(data.id);
+                    }
+                });
+
+            $('#produts .layui-btn').on("click", function () {
+                $.openLayer("新增商户", "/Company/AddorEdit", function () {
+                    $("#btn-submit").click();
+                }, 480, 480);
+            });
+        });
+
+
+
+
+
+    </script>
+}

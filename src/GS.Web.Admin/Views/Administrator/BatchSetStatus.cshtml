@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "BatchSetStatus";
+}
+
+@model Sikiro.Web.Admin.Models.Administrator.BatchSetStatusModel
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Administrator" asp-action="BatchSetStatus" style="padding: 20px">
+
+    @foreach (var item in Model.UserIds)
+    {
+        <input name="UserIds" value="@item" type="hidden" />
+    }
+
+    <layuiSelect asp-for="Status" input-display="LayuiFormItem" />
+
+</layuiForm>
+

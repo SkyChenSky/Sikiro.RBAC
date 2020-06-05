@@ -1,0 +1,1087 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="~/layuiadmin/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="~/css/iconfont/iconfont.css" />
+    <link rel="stylesheet" href="~/css/talk.css" />
+    <link rel="stylesheet" href="~/layuiadmin/layui/css/modules/layim/layim.css">
+    <style>
+        .loadMore {
+            text-align: center;
+            color: #01AAED;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity .5s;
+        }
+
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            opacity: 0;
+        }
+
+        .talkStop {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            z-index: 50;
+            background: rgba(0,0,0,0);
+        }
+
+        .form-more {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .tableInput {
+            line-height: 36px;
+            height: 36px;
+            font-size: 14px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+            .tableInput span {
+                margin-left: 5px;
+            }
+
+        .layim-chat-main {
+            height: 360px;
+        }
+
+        .talk-other {
+            flex: 1;
+        }
+
+            .talk-other .names {
+                display: flex;
+            }
+
+            .talk-other .tips {
+                text-indent: 10px;
+                font-size: 12px;
+                color: #999;
+            }
+
+        .talking-head {
+            display: flex;
+        }
+
+        .talking-tips {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+            .talking-tips input[readonly ] {
+                border: none;
+                background: none;
+                cursor: pointer;
+            }
+
+            .talking-tips input {
+                width: 100px;
+                height: 20px;
+            }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="layui-container">
+            <div class="fang-talk">
+                <div class="layui-row">
+                    <div class="layui-col-md2">
+                        <div class="talk-people-list" style="max-height:600px">
+                            <div class="talk-people-one" v-for="item in talkList" :class="[item.id==talkObj.id?'isActive':'']" :id="item.id" v-on:click="goTalk(item)">
+                                <img :src="item.avater">
+                                <div class="talk-other">
+                                    <div class="names">
+                                        <div class="name">{{item.name}}</div><span v-if="item.num>0" class="layui-badge">{{item.num}}</span>
+                                    </div>
+                                    <div class="tips">{{item.remark}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md7">
+                        <div v-if="notalk==true" class="talking-room" v-on:click="refresh">
+                            <transition name="fade">
+                                <div class="responseTime" v-if="lineState==false">{{lineTxt}}</div>
+                            </transition>
+                            <div style="width: 50%; margin: 180px auto; text-align: center;">
+                                <img style="width: 55%;" src="~/img/kefu.jpg" />
+                                <p style="font-size: 16px;margin-top:10px">沟通是心灵与心灵之间的桥梁</p>
+                            </div>
+                        </div>
+                        <div v-if="notalk==false" class="talking-room" v-on:click="refresh">
+                            <div class="talkStop" v-if="lineState==false"></div>
+                            <div class="talking-head">
+                                <p style="max-width: 200px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{talkObj.name}}</p>
+                                <div class="talking-tips">
+                                    备注：<input type="text" style="width: 260px" class="tipsSet" v-model="talkObj.remark" readonly="">
+                                    <button type="button" class="editTips layui-btn layui-btn-primary layui-btn-xs"><i class="layui-icon layui-icon-edit"></i></button>
+                                    <button type="button" v-on:click="disConnect" class="layui-btn layui-btn-primary layui-btn-xs">断开连接</button>
+                                </div>
+                            </div>
+                            <div class="talking-list">
+
+                                <div class="layim-chat-main" ref='chatMain'>
+                                    <div v-if="isShowMore" class="loadMore" v-on:click='loadMore'>查看更多</div>
+                                    <ul>
+                                        <template v-for="talk in talkObj.talking">
+                                            <talk-message-right v-if='talk.type==0' :time='talk.time' :send-type="talk.sendType" :name="talk.name" :avater="talk.avater" :content='talk.content' :img='talk.img' :talktype='talk.type'></talk-message-right>
+                                            <talk-message-left v-else :name="talk.name" :form-name="talk.formName" :send-type="talk.sendType" :form-id='talk.formId' :time='talk.time' :avater="talk.avater" :content='talk.content' :img='talk.img' :talktype='talk.talkType' @@child-clear-form='clearFormToChild' @@child-set-form='childSetForm'></talk-message-left>
+                                        </template>
+                                    </ul>
+                                </div>
+                                <div class="responseTime" v-if="nowTime!=''">{{nowTime}}</div>
+                                <transition name="fade">
+                                    <div class="responseTime" v-if="lineState==false">{{lineTxt}}</div>
+                                </transition>
+                            </div>
+                            <div class="talking-ctrl">
+                                <div class="talking-ctrl-more">
+                                    <span id="uploadFileBtn" style="cursor:pointer" v-on:click="clickInputFile" class="iconfont icon-tupian"></span>
+                                    <input ref="uploadImage" type="file" @@change="uploadFile" style="display: none;">
+                                    <a v-on:click="goHistroy" style="cursor: pointer; float: right;margin-right: 20px">历史记录</a>
+                                </div>
+                                <div class="talking-ctrl-input">
+                                    <textarea v-model="userTalk" v-on:keyup="getCode(treeData,userTalk)" @@keydown="listen($event)"></textarea><button class="layui-btn layui-btn-primary layui-btn-sm" v-on:click="send(1)">发送</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="talk-fast-result">
+                            <item v-bind:tree='treeData' id='tree' v-on:get-tree-call='getTree'></item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-content" style="display: none;">
+            <div class="form-more layui-form">
+                <div class="layui-form-item" v-if="setForm.indexOf('orderId')!=-1">
+                    <label class="layui-form-label">订单号</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.orderId}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('prescription')!=-1">
+                    <label class="layui-form-label">时效</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.prescription}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('userId')!=-1">
+                    <label class="layui-form-label">用户id</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.userId}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('weight')!=-1">
+                    <label class="layui-form-label">重量</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.weight}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('lwh')!=-1">
+                    <label class="layui-form-label">体积</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'><span>长</span>{{form.long}}<span>cm</span><span>宽</span>{{form.wide}}<span>cm</span><span>高</span>{{form.long}}<span>cm</span></div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('brand')!=-1">
+                    <label class="layui-form-label">品牌</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.brand}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('productName')!=-1">
+                    <label class="layui-form-label">品名</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.productName}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('destination')!=-1">
+                    <label class="layui-form-label">目的国家</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.destination}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('sendAddress')!=-1">
+                    <label class="layui-form-label">发货地</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.sendAddress}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('takeOver')!=-1">
+                    <label class="layui-form-label">取货方式</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.takeOver}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('payer')!=-1">
+                    <label class="layui-form-label">付款方式</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.payer}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('date')!=-1">
+                    <label class="layui-form-label">选择日期</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.date}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('timeSlot')!=-1">
+                    <label class="layui-form-label">选择时间段</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.timeSlot}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('timeZoom')!=-1">
+                    <label class="layui-form-label">选择时间区间</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.timeZoom}}</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" v-if="setForm.indexOf('statusStr')!=-1">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <div class='tableInput'>{{form.statusStr}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layer_notice_txt" style="display: none;">
+        <div class="layer_notice" style="padding: 20px;  ">
+            <a style=" color: blue;" href="https://www.google.cn/intl/zh-CN/chrome/">该功能不支持当前浏览器版本。请下载最新版本浏览器</a>
+        </div>
+    </div>
+    <!----聊天角色    我----->
+    <template id="talk-message-right" v-cloak>
+        <li class='layim-chat-mine'>
+            <div class="layim-chat-user">
+                <img :src="avater"><cite>
+                    <i>{{time}}</i>{{name}}
+                </cite>
+            </div>
+            <div class="layim-chat-text">
+                <template v-if="sendType == 1">
+                    {{content}}
+                </template>
+                <img v-else-if="sendType == 2" v-on:load='imgLoad' v-on:click="showImg($event)" style="max-width: 100px;" :src="img">
+            </div>
+        </li>
+
+    </template>
+    <!----聊天角色   别人----->
+    <template id="talk-message-left" v-cloak>
+        <li>
+            <div class="layim-chat-user">
+                <img :src="avater"><cite>
+                    {{name}}<i>{{time}}</i>
+                </cite>
+            </div>
+            <div class="layim-chat-text">
+                <template v-if="sendType == 1">
+                    {{content}}
+                </template>
+                <img v-else-if="sendType == 2" v-on:click="showImg($event)" style="max-width: 100px;" :src="img">
+                <div v-else-if="sendType == 3" class="subForm" v-on:click='lookTable(formId)'>
+                    <p style="color: #03A9F4;cursor: pointer;">
+                        <span style="font-size: 14px; font-weight: bold; color: #000; ">表单消息</span><br>
+                        点击查看【{{formName}}】表单明细
+                    </p>
+                </div>
+            </div>
+        </li>
+    </template>
+    <template id='treeTemplate' v-cloak>
+        <ul class="tree-box">
+            <li class="tree-item" style="cursor: pointer;" v-for='(v,i) in tree'>
+                <div class="tree-info-box">
+                    <i class="layui-icon" :class="[ tree[i].open ? 'layui-icon-triangle-r' :' layui-icon-triangle-d']" v-if="isFolder(v)" @@click="toggle(i)"></i>
+                    <i v-else class="layui-icon layui-icon-file"></i>
+                    <span :data-id="i" class="title-name" @@click="changeCheck(v)">{{v.name}}</span>
+
+                </div>
+                <item v-bind:tree='v.child' v-show="tree[i].open" v-on:get-tree-call='getTree' style="margin-left: 20px;"></item>
+            </li>
+        </ul>
+    </template>
+    <script src="~/layuiadmin/layui/layui.js"></script>
+    <script src="~/vue/vue.js"></script>
+    <script src="~/vue/axios.min.js"></script>
+    <script src="~/framework/lzr/dist/lrz.bundle.js"></script>
+    <script src="~/signalr/signalr.min.js"></script>
+    <script src="~/jquery/jquery.js"></script>
+    <script>
+
+        $(function () {
+
+            var DEFAULT_VERSION = 9.0;
+            var ua = navigator.userAgent.toLowerCase();
+            var isIE = ua.indexOf("msie") > -1;
+            var isSpeed = ua.indexOf(") like gecko") > -1;
+            var safariVersion;
+            if (isIE) {
+                safariVersion = ua.match(/msie ([\d.]+)/)[1];
+            }
+            console.log(ua)
+            if (isSpeed) {
+                document.getElementById("app").style.display = 'none';
+                layui.use(['layer'], function () {
+                    var html = $('.layer_notice_txt').html();
+
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        shade: false,
+                        title: false, //不显示标题
+                        content: html, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                        cancel: function () {
+
+                        }
+                    });
+                })
+                return false;
+            }
+
+            if (safariVersion <= DEFAULT_VERSION) {
+                // 进行你所要的操作
+                layui.use(['layer'], function () {
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        shade: false,
+                        title: false, //不显示标题
+                        content: $('.layer_notice'), //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                        cancel: function () {
+
+                        }
+                    });
+                })
+            }
+        })
+    </script>
+    <script>
+
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1,                 //月份
+                "d+": this.getDate(),                    //日
+                "h+": this.getHours(),                   //小时
+                "m+": this.getMinutes(),                 //分
+                "s+": this.getSeconds(),                 //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds()             //毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
+        Vue.component('item', {
+            template: '#treeTemplate',
+            props: ['tree'],
+            data: function () { return { form: '', layer: "", } },
+            mounted() { var that = this; layui.use(['form', 'layer'], function () { that.form = layui.form; that.layer = layui.layer; }); },
+            methods: {
+
+                toggle: function (i) { this.tree[i].open = !this.tree[i].open; this.$set(this.tree, i, this.tree[i]); },
+                isFolder: function (data) {
+                    return data.child && data.child.length
+                },
+                changeCheck(i) {
+                    var that = this;
+                    that.$emit('get-tree-call', i.name);
+                },
+                getTree(i) {
+                    var that = this;
+                    that.$emit('get-tree-call', i);
+                },
+                getChildVal(msg) {
+                    console.log(msg)
+                }
+            },
+        });
+
+        Vue.component("talk-message-right",
+            {
+                props: ['name', 'avater', 'content', 'img', 'time', 'sendType'],
+                data: function () {
+                    return {
+                    }
+                },
+                methods: {
+                    imgLoad() {
+                        var that = this;
+                        this.$nextTick(() => {
+                            $(".layim-chat-main").animate({ scrollTop: $(".layim-chat-main ul").height() }, 100);
+                        });
+                    },
+                    showImg(ev) {
+                        var imgHtml = "<img src='" +
+                            ev.currentTarget.src +
+                            "' width='600' style='display:block; margin:5% auto;' />";
+                        //弹出层
+                        layer.open({
+                            type: 1,
+                            shade: 0.8,
+                            offset: 'auto',
+                            area: [800 + 'px'],
+                            shadeClose: true,
+                            scrollbar: false,
+                            title: "图片预览", //不显示标题
+                            content: imgHtml, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                            cancel: function () {
+                                //layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
+                            }
+                        });
+                    }
+                },
+                template: '#talk-message-right'
+            });
+
+        Vue.component("talk-message-left",
+            {
+                props: ['name', 'avater', 'content', 'img', 'time', 'formId', 'sendType', 'formName'],
+                data: function () {
+                    return {
+                    }
+                },
+                methods: {
+                    imgLoad() {
+                        var that = this;
+                        this.$nextTick(() => {
+
+                            $(".layim-chat-main").animate({ scrollTop: $(".layim-chat-main ul").height() }, 100);
+                        });
+                    },
+                    showImg(ev) {
+
+                        var imgHtml = "<img src='" +
+                            ev.currentTarget.src +
+                            "' width='600' style='display:block; margin:5% auto;' />";
+                        //弹出层
+                        layer.open({
+                            type: 1,
+                            shade: 0.8,
+                            offset: 'auto',
+                            area: [800 + 'px'],
+                            shadeClose: true,
+                            scrollbar: false,
+                            title: "图片预览", //不显示标题
+                            content: imgHtml, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                            cancel: function () {
+                                //layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
+                            }
+                        });
+                    },
+                    setFormType(type, data) {
+                        //穿表单类型
+                        this.$emit('child-set-form', { type: type, data: data })
+                    },
+                    clearFormType() {
+                        //清空表单
+                        this.$emit('child-clear-form')
+                    },
+                    lookTable(formId) {
+                        var that = this;
+                        $.post("/CustomService/GetFormValueById",
+                            { formId: formId },
+                            function (r) {
+                                if (r.success) {
+                                    var type = r.data.formType;
+                                    that.setFormType(type, r.data);
+                                    that.$nextTick(() => {
+                                        if (r.data.status == 0) {
+                                            layer.open({
+                                                type: 1,
+                                                area: ['450px'], //宽高
+                                                content: $(".form-content").html(),
+                                                btn: ['确认', '驳回'],
+                                                btn1: function (index) {
+                                                    $.post("/CustomService/ComfirForm",
+                                                        { formId: formId },
+                                                        function (s) {
+                                                            that.$nextTick(() => {
+                                                                layer.close(index)
+                                                            })
+                                                        });
+                                                },
+                                                btn2: function (index) {
+                                                    $.post("/CustomService/CancelForm",
+                                                        { formId: formId },
+                                                        function (s) {
+                                                            that.$nextTick(() => {
+                                                                layer.close(index)
+                                                            })
+                                                        });
+                                                }
+                                            });
+                                        } else {
+                                            layer.open({
+                                                type: 1,
+                                                area: ['450px'], //宽高
+                                                content: $(".form-content").html()
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                    }
+                },
+                template: '#talk-message-left'
+            });
+
+        var vue = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    formFormat: {
+                        "10": ['userId', 'weight', 'lwh', 'brand', 'productName', 'destination', 'takeOver', 'date', 'statusStr'], //预定机仓
+                        "20": ['userId', 'weight', 'lwh', 'brand', 'productName', 'destination', 'sendAddress', 'takeOver', 'date', 'statusStr'], //包货柜
+                        "30": ['orderId', 'prescription', 'destination', 'takeOver', 'date', 'timeSlot', 'timeZoom', 'statusStr'], //预约配送
+                        "40": ['orderId', 'prescription', 'destination', 'payer', 'date', 'statusStr'], //预约付款
+                    },
+                    setForm: [],
+
+                    form: {
+                        orderId: '',
+                        date: '',
+                        userId: '',
+                        long: '',
+                        weight: '',
+                        wide: '',
+                        high: '',
+                        takeOver: '',
+                        destination: '',
+                        brand: '',
+                        productName: '',
+                        sendAddress: '',
+                        prescription: '',
+                        timeSlot: '',
+                        payer: '',
+                        timeZoom: '',
+                        statusStr: ''
+                    },
+                    isGoBottom: true,
+                    isShowMore: true,
+                    firstDateTime: "",
+                    notalk: true,
+                    lineState: false,
+                    lineTxt: '正在连接中，请稍等',
+                    userTalk: '', //用户输入框
+                    connection: {},
+                    msgLog: [],
+                    msg: {
+                        nickName: "",
+                        content: "",
+                        customServiceId: "",
+                        companyId: "",
+                        customId: "",
+                        formId: "",
+                        logo: "",
+                        formName: ""
+                    },
+                    treeData: [
+                    ],
+                    nowTime: '',
+                    talkObj: { //用户聊天对象
+                        id: "", //发送给谁得id
+                        name: "",
+                        remark: "",
+                        talking: [
+
+                        ]
+
+                    },
+                    talkList: [//聊天列表
+                    ],
+                    timeInterval: ''
+                }
+            },
+            mounted() {
+                window.addEventListener('scroll', this.handleScroll, true);
+
+                this.connect();
+                var that = this;
+
+                $(document).on("click", ".editTips", function () {
+                    if ($(".tipsSet").prop('readOnly')) {
+                        $(".tipsSet").prop('readOnly', false);
+                    } else {
+                        $(".tipsSet").prop('readOnly', true);
+
+                        $.post("/CustomService/SetCustomerRemark", { customerId: that.talkObj.id, remark: that.talkObj.remark }, function (r) {
+                            for (var i = 0; i < that.talkList.length; i++) {
+                                if (that.talkList[i].id == that.talkObj.id) {
+                                    that.talkList[i].remark = that.talkObj.remark;
+                                }
+                            }
+
+                        });
+                    }
+                });
+            },
+            created() {
+                this.loadFast();
+            },
+            methods: {
+                disConnect() {
+                    var that = this;
+                    layer.confirm("是否确认中断对方通讯",
+                        { icon: 3, title: '提示' },
+                        function (index) {
+                            that.connection.invoke('CustomDisConnect', that.talkObj.id);
+                            layer.msg("中断成功",
+                                {
+                                    icon: 1,
+                                    time: 2000,
+                                    end: function () {
+                                        layer.close(index);
+                                    }
+                                });
+                        });
+                },
+                childSetForm(res) {
+                    this.setForm = this.formFormat[res.type];
+                    this.form = res.data;
+                },
+                clearFormToChild() {
+                    this.setForm = []
+
+                    this.formClose()
+                },
+                clearForm() {//清空表单
+                    for (let i in this.form) {
+                        this.form[i] = ''
+                    }
+                },
+                formClose() {//关闭表单
+                    $(".form-more").appendTo(".form-content")
+                    this.clearForm()
+                },
+                getForm(type, title) {//设置表单
+
+                    this.setForm = this.formFormat[type];
+
+                    let that = this;
+                    layer.open({
+                        type: 0,
+                        title: [
+                            title,
+                            'background-color: #03a9f4; color:#fff;height:40px;line-height:40px;'
+                        ],
+                        shadeClose: false,
+                        content: '',
+                        btn: ['确定', '返回'],
+                        yes: function (index) {
+                            that.formClose();
+                            layer.close(index);
+                        },
+                        no: function (index) {
+                            that.formClose();
+                            layer.close(index);
+                        }, end: function () {
+                            that.formClose();
+                        }
+                    });
+                    $(".form-more").appendTo(".layui-m-layercont")
+                },
+                listen(event) {
+                    if (event.keyCode === 13) {
+                        event.preventDefault();
+                        this.send(1);
+                    }
+                },
+                getCode(tree, code) {
+                    for (let i = 0; i < tree.length; i++) {
+                        if (tree[i]["code"] == code) {
+                            this.userTalk = tree[i]['name'];
+                        } else if (tree[i]['child'].length > 0) {
+                            this.getCode(tree[i].child, code);
+                        }
+                    }
+                },
+                goHistroy() {
+
+                    var that = this;
+                    var userid = that.msg.customId;
+                    var name = that.talkObj.name;
+                    top.layui.index.openTabsPage('/Chat/Index?userId=' + userid, '历史记录-' + name);
+                },
+                refresh() {
+                    if (this.lineTxt == "通讯服务器异常，请点击刷新重试") {
+                        window.location.reload();
+                    }
+                },
+                InitDone(msg) {
+                    for (var i = 0; i < msg.length; i++) {
+                        this.initTalkList(msg[i].customId, msg[i].logo, msg[i].nickName, msg[i].count, msg[i].remark);
+                    }
+                },
+                CustomServiceHistory(msg) {
+                    var that = this;
+                    that.talkObj.talking = msg.concat(that.talkObj.talking);
+                    if (that.talkObj.talking.length > 0) {
+                        that.firstDateTime = that.talkObj.talking[0].time;
+                    }
+
+                    if (msg.length < 10) {
+                        that.isShowMore = false;
+                    }
+
+                    if (that.isGoBottom) {
+                        that.goBottom();
+                    }
+                },
+                ConnectComplete() {
+                    var that = this;
+                    that.isloadingMsg = "连接完成";
+                    that.$nextTick(() => {
+                        that.isloading = false;
+                    });
+                },
+                loadMore() {
+                    var that = this;
+                    that.isGoBottom = false;
+                    that.connection.invoke('CustomServiceHistory', that.firstDateTime, that.talkObj.id);
+                },
+                AddHistory(r, customId) {
+
+                    var that = this;
+                    if (that.msg.customId != customId) {
+                        var talkObj = {}
+                        var hislog = sessionStorage.getItem(customId);
+                        if (hislog != null) {
+                            talkObj = JSON.parse(hislog);
+                        } else {
+                            talkObj.id = customId;
+                            talkObj.name = r.name;
+                            talkObj.talking = [];
+                        }
+                        talkObj.talking.push(r);
+                        sessionStorage.setItem(customId, JSON.stringify(talkObj));
+                    }
+                },
+                ForRead() {
+                    var that = this;
+                    that.connection.invoke('ForRead', that.talkObj.id);
+                },
+                goBottom() {
+                    var that = this;
+                    this.$nextTick(() => {
+                        var container = that.$el.querySelector(".layim-chat-main");
+                        container.scrollTop = container.scrollHeight;
+                    });
+                },
+                Receive(msg) {
+                    var that = this;
+
+                    //联系人添加
+                    if (msg.sendFrom != 0) {
+                        that.addTalkList(msg.customId, msg.logo, msg.nickName, null, msg.remark);
+                    }
+
+                    var r = {
+                        name: msg.nickName,
+                        content: "",
+                        time: msg.createDateTimeString,
+                        img: "",
+                        avater: "",
+                        type: msg.sendFrom,
+                        sendType: msg.type,
+                        formId: msg.formId,
+                        formName: msg.formName
+                    };
+
+                    if (msg.type == 1) {
+                        r.content = msg.content;
+                    } else if (msg.type == 2) {
+                        r.img = msg.content;
+                    }
+
+                    if (msg.sendFrom == 1) {
+                        r.avater = msg.logo;
+                    } else if (msg.sendFrom == 0) {
+                        r.avater = that.msg.logo;
+                    }
+
+                    that.AddHistory(r, msg.customId);
+
+                    if (that.msg.customId == msg.customId) {
+                        that.talkObj.talking.push(r);
+
+                        that.goBottom();
+
+                        sessionStorage.setItem(msg.customId, JSON.stringify(that.talkObj));
+                    }
+
+                    //已读信息持久化
+                    that.ForRead();
+                },
+                addTalkList(customId, logo, nickName, num, remark) {
+                    var that = this;
+                    var isHere = false;
+                    var index = 0;
+                    for (var i = 0; i < that.talkList.length; i++) {
+                        if (that.talkList[i].id == customId) {
+                            isHere = true;
+                            index = i;
+                        }
+                    }
+
+                    if (!isHere) {
+                        if (num == undefined) {
+                            num = 1;
+                        }
+                        var s = {
+                            id: customId,
+                            avater: logo,
+                            name: nickName,
+                            num: num,
+                            remark: remark
+                        };
+                        that.talkList.unshift(s);
+
+                    } else {
+                        if (that.msg.customId != customId) {
+                            if (index > 0) {
+                                var item = that.talkList.splice(index, 1)[0];
+                                item.num = item.num + 1;
+                                that.talkList.unshift(item);
+                            } else {
+                                that.talkList[index].num = that.talkList[index].num + 1;
+                            }
+                        }
+                    }
+                },
+                initTalkList(customId, logo, nickName, num, remark) {
+                    var that = this;
+
+                    var s = {
+                        id: customId,
+                        avater: logo,
+                        name: nickName,
+                        num: num,
+                        remark: remark
+                    };
+                    that.talkList.push(s);
+                },
+                connect() {
+                    var that = this;
+                    var axi = axios;
+                    axi.post('/Account/GetInfo')
+                        .then(function (response) {
+                            var data = response.data;
+
+                            that.msg.nickName = data.nickName;
+                            that.msg.customServiceId = data.customServiceId;
+                            that.msg.logo = data.logo;
+                            that.msg.companyId = data.companyId;
+                            that.msg.host = data.host;
+
+                            axi.post(that.msg.host + '/api/auth/gettoken',
+                                {
+                                    UserId: that.msg.customServiceId,
+                                    CompanyId: that.msg.companyId,
+                                    Type: 0
+                                })
+                                .then(function (response) {
+                                    var token = response.data;
+
+                                    that.connection = new signalR.HubConnectionBuilder()
+                                        .withUrl(that.msg.host + '/chat', { accessTokenFactory: () => token })
+                                        .build();
+
+                                    that.connection.on('Receive', that.Receive);
+
+                                    that.connection.on('CustomServiceHistory', that.CustomServiceHistory);
+
+                                    that.connection.on('ConnectComplete', that.ConnectComplete);
+
+                                    that.connection.on('InitDone', that.InitDone);
+
+                                    that.connection.onclose(that.reConnect);
+
+                                    that.start();
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+
+                            axi.post('/CustomService/ChatReplyList', null)
+                                .then(function (response) {
+                                    that.treeData = response.data;
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+                },
+                handleScroll: function (scroll) {
+
+                },
+                loadHistoryData() {
+                    //加载历史记录
+                },
+                setTime() {
+                    var vm = this;
+                    var count = 0;
+                    vm.nowTime = new Date().Format('yyyy-MM-dd hh:mm:ss') + "正在沟通（" + count + "s)";
+
+                    //倒计时
+                    if (this.timeInterval != '') clearInterval(this.timeInterval)
+                    this.timeInterval = setInterval(function () {
+                        count += 1;
+                        vm.nowTime = new Date().Format('yyyy-MM-dd hh:mm:ss') + "  正在沟通（" + count + "s)";
+                    },
+                        1000);
+
+                },
+                clickInputFile() {
+                    this.$refs.uploadImage.dispatchEvent(new MouseEvent('click'));
+                },
+                uploadFile() {
+                    //上传图片
+                    var file = this.$refs.uploadImage.files[0];
+                    var that = this;
+                    //图片压缩
+                    lrz(file, { width: 600 })
+                        .then(function (rst) {
+                            $.ajax({
+                                url: '/upload/img',
+                                data: rst.formData,
+                                processData: false,
+                                contentType: false,
+                                type: 'POST',
+                                success: function (r) {
+                                    that.userTalk = r.data;
+                                    that.send(2);
+                                    that.$refs.uploadImage.value = '';
+                                }
+                            });
+                        })
+                        .catch(function (err) {
+                            // 处理失败会执行
+                        })
+                        .always(function () {
+                            // 不管是成功失败，都会执行
+                        });
+                },
+                send(type) {
+                    if (this.lineState == false) {
+                        return false;
+                    }
+                    //发送消息
+                    if (this.userTalk.indexOf('\n') != 0 && this.userTalk.length > 1) {
+
+                        var that = this;
+                        that.msg.content = that.userTalk;
+                        that.msg.type = type;
+                        that.connection.invoke('CustomServiceSend', that.msg);
+                        that.userTalk = '';
+
+                    }
+                },
+                goTalk(talk) {
+                    //保存历史数据 保存切换前用户聊天数据
+                    var that = this;
+                    this.msg.customId = talk.id;
+                    this.talkObj.id = talk.id;
+                    this.talkObj.name = talk.name;
+                    this.talkObj.remark = talk.remark;
+                    this.firstDateTime = "";
+                    this.talkObj.talking = [];
+                    this.isGoBottom = true;
+                    that.connection.invoke('CustomServiceHistory', that.firstDateTime, that.talkObj.id);
+
+                    //记录第一条数据
+                    if (this.talkObj.talking.length > 0) {
+                        this.firstDateTime = this.talkObj.talking[0].time;
+                    }
+
+                    //已读信息持久化
+                    this.notalk = false;
+                    this.isShowMore = true;
+                    talk.num = 0;
+                    this.ForRead();
+                    this.setTime();
+                },
+                loadFast() {
+                    //加载快速回复内容
+                    var vm = this;
+                    layui.use('tree',
+                        function () {
+                            var tree = layui.tree;
+
+                            //渲染
+                            var inst1 = tree.render({
+                                elem: '#test1' //绑定元素
+                                ,
+                                data: vm.fast,
+                                showLine: false,
+                                click: function (obj) {
+                                    console.log(obj.data); //得到当前点击的节点数据
+                                    console.log(obj.data.title);
+                                    if (obj.data.children == undefined) {
+                                        vm.userTalk = obj.data.title;
+                                    }
+
+                                }
+                            });
+                        });
+                },
+                getTree(val) {
+                    //设置发送内容
+                    this.userTalk = val;
+                },
+                start: function () {
+                    var connection = this.connection;
+                    var that = this;
+                    this.connection.start()
+                        .then(function () {
+                            that.lineTxt = '连接成功';
+                            that.notalk = true;
+                            that.$nextTick(() => {
+                                that.lineState = true;
+                            });
+                            connection.invoke('InitCustomService');
+                        })
+                        .catch(error => {
+                            that.lineTxt = '通讯服务器异常，请点击刷新重试';
+                            that.notalk = false;
+                            that.lineState = false;
+                        });
+                },
+                reConnect: function () {
+                    var that = this;
+                    if (that.connection.state === 0) {
+                        that.start();
+                    }
+                }
+            },
+            destroyed: function () {
+                window.removeEventListener('scroll', this.handleScroll); //  离开页面清除（移除）滚轮滚动事件
+            }
+        });
+
+    </script>
+</body>
+</html>

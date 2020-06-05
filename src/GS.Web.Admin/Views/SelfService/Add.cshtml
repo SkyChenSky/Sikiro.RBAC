@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+@model Sikiro.Web.Admin.Models.SelfService.AddSelfService
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="SelfService" asp-action="AddAJax" style="padding: 20px">
+
+    <layuiFormEdit asp-for="ServiceName" />
+
+    <layuiImg asp-for="ServiceLogo" />
+
+    <layuiFormEdit asp-for="Order" type="number" />
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">详情</label>
+        <div class="layui-input-inline">
+
+            <textarea id="editor" type="text/plain" style="min-height:1000px;width:800px" name="editorVulue">
+                </textarea>
+
+        </div>
+    </div>
+
+</layuiForm>
+
+@section Scripts{
+    <script>
+        $.Editor();
+        var width = $(window).width() * 0.8 + 'px';
+        $("#editor").width(width);
+    </script>
+}
+
+

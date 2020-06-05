@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "Add";
+
+    //var model = (Product)ViewBag.model;
+}
+@model Sikiro.Web.Admin.Models.ProductAging.AddProduct
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="ProductAging" asp-action="AddAJax" style="padding: 20px">
+
+    <layuiFormEdit asp-for="ProductName" />
+
+    <layuiImg asp-for="ProductLogo" />
+
+    <layuiFormEdit asp-for="Item1" />
+
+    <layuiFormEdit asp-for="Item1Val" />
+
+    <layuiFormEdit asp-for="Item2" />
+
+    <layuiFormEdit asp-for="Item2Val" />
+
+    <layuiFormEdit asp-for="Order" type="number" />
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">详情</label>
+        <div class="layui-input-inline">
+
+            <textarea id="editor" type="text/plain" style="min-height:1000px;width:800px" name="editorVulue">
+                </textarea>
+
+        </div>
+    </div>
+
+</layuiForm>
+
+@section Scripts{
+    <script>
+        $.Editor();
+        var width = $(window).width() * 0.8 + 'px';
+        $("#editor").width(width);
+    </script>
+}
+
+

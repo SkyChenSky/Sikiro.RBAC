@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "add";
+}
+
+@model Sikiro.Web.Admin.Models.Role.AddRole
+<layuiForm id="layuiadmin-form-admin" asp-controller="Role" asp-action="AddAJax" style="padding: 20px">
+
+    <input style="display:none" />
+
+    <layuiFormEdit asp-for="Name" />
+</layuiForm>

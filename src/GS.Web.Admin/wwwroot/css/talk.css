@@ -1,0 +1,174 @@
+[v-cloak] {
+    display: none;
+}
+
+.talk-people-list {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    overflow: auto;
+    background: rgb(230,229,229);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.talk-people-one {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+    .talk-people-one:hover {
+        background: rgb(217,216,216);
+    }
+
+    .talk-people-one img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50px;
+        flex-shrink: 0;
+    }
+
+    .talk-people-one .name {
+        margin-left: 10px;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+    }
+
+.talking-room {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.talking-head {
+    font-size: 18px;
+    background: rgb(245,245,245);
+    padding: 10px;
+    height: 60px;
+    line-height: 40px;
+    border-bottom: 1px solid rgb(231,231,231);
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+.talking-list {
+    flex: 1;
+    overflow: auto;
+    background: rgb(245,245,245);
+    position: relative;
+}
+
+.layim-chat-main {
+    height: 350px;
+}
+
+.talking-ctrl {
+    height: 160px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.talking-ctrl-more {
+    line-height: 40px;
+}
+
+    .talking-ctrl-more .iconfont {
+        font-size: 20px;
+        margin-left: 20px;
+    }
+
+.talking-ctrl-input {
+    width: 100%;
+    flex: 1;
+    text-align: right;
+}
+
+    .talking-ctrl-input textarea {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        box-sizing: border-box;
+        padding: 0 20px;
+        border: 0;
+        height: 75px;
+        resize: none;
+    }
+
+    .talking-ctrl-input button {
+        margin-right: 20px;
+    }
+
+.fang-talk {
+    border: 1px solid rgb(217,213,197);
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px rgba(0,0,0,.3);
+    margin-top: 100px;
+}
+
+.talk-fast-result {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    background: rgb(230,229,229);
+    overflow: auto;
+    padding-top: 20px;
+    box-sizing: border-box;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.layui-tree-txt {
+    width: 200px;
+    overflow: auto;
+}
+
+.fang-talk ::-webkit-scrollbar { /*滚动条整体样式*/
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 5px;
+}
+
+.fang-talk ::-webkit-scrollbar-thumb { /*滚动条里面小方块*/
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #999;
+}
+
+.fang-talk ::-webkit-scrollbar-track { /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background: #EDEDED;
+}
+
+.talk-people-one.isActive {
+    background: rgb(201,199,198);
+}
+
+.talk-time {
+    display: block;
+    margin: 0px auto;
+    position: relative;
+}
+
+.layim-chat-main ul li {
+    min-height: auto;
+}
+
+.responseTime {
+    position: absolute;
+    z-index: 20;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    line-height: 20px;
+    top: 0;
+}

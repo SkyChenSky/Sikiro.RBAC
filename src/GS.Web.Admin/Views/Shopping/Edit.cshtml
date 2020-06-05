@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+}
+
+@model Sikiro.Web.Admin.Models.Shopping.EditShopping
+<layuiForm id="layuiadmin-form-admin" asp-controller="Shopping" asp-action="EditAJax" style="padding: 20px">
+
+    <input type="hidden" value="@(Model.Id)" name="id" id="prdutsId">
+
+    <layuiFormEdit asp-for="ProductName" />
+
+    <layuiImg asp-for="ProductLogo" />
+
+    <layuiFormEdit asp-for="Item1" />
+
+    <layuiFormEdit asp-for="Item1Val" />
+
+    <layuiFormEdit asp-for="Item2" />
+
+    <layuiFormEdit asp-for="Item2Val" />
+
+    <layuiFormEdit asp-for="GoUrl" />
+
+    <layuiFormEdit asp-for="Order" type="number" />
+
+</layuiForm>

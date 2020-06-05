@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Relate";
+}
+@using Sikiro.Service.System.Bo
+@model Sikiro.Web.Admin.Models.Menu.RelateModel
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Menu" asp-action="Relate" style="padding: 20px" class="layui-row">
+    <input asp-for="MenuId" type="hidden" />
+
+    @foreach (var item in (IEnumerable<MenuActionBo>)ViewBag.Menu)
+    {
+        <div class="layui-col-xs3">
+            <input name="MenuActionId" type="checkbox" title="@item.Name" value="@item.Id" @(item.Selected ? "checked" : "") lay-skin="primary" />
+        </div>
+    }
+
+</layuiForm>

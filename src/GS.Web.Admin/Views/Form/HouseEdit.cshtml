@@ -1,0 +1,359 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+
+    var feedbackList = (List<FormDetail>)ViewBag.feedbackList;
+
+    var formStateAdress = (List<SelectListItem>)ViewBag.getFormStateAdress; // 发货地址
+
+    var formStateClaimGoods = (List<SelectListItem>)ViewBag.getFormStateClaimGoods; //取货方式
+    var formAging = (List<SelectListItem>)ViewBag.getFormAging; //时效
+
+    var payment = (List<SelectListItem>)ViewBag.getPayment; //付款方式
+    var timeQuantum = (List<SelectListItem>)ViewBag.getTimeQuantum; //选择时间段
+    var timeSection = (List<SelectListItem>)ViewBag.getTimeSection; //选择时间区间
+    var isLook=(bool)ViewBag.isLook;
+    var administratorName = (string)ViewBag.administratorName;
+
+}
+
+@using Sikiro.Entity.Admin
+@using Sikiro.Web.Admin.Permission
+@model Sikiro.Web.Admin.Models.Form.EditFormModel
+<form style="padding: 20px;" action="/Form/FromEditAJax" class="layui-form layuiadmin-card-header-auto layui-form-pane" id="house-form-admin" lay-filter="house-form-admin" method="post">
+
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="Operation" type="hidden" />
+
+    @if (Model.FormType == (int)FormType.BookRoom || Model.FormType == (int)FormType.Container)
+    {
+        <layuiFormEdit asp-for="UserId" text="用户ID" />
+        <layuiFormEdit asp-for="Weight" text="重量" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">体积</label>
+            <div class="layui-form-mid">长</div>
+            <div class="layui-input-inline">
+                <input type="text" name="Longth" lay-verify="" autocomplete="off" placeholder="" class="layui-input" value="@Model.Volume.Longth">
+            </div>
+            <div class="layui-form-mid">cm</div>
+            <div class="layui-form-mid">宽</div>
+            <div class="layui-input-inline">
+                <input type="text" name="Wide" lay-verify="" autocomplete="off" placeholder="" class="layui-input" value="@Model.Volume.Wide">
+            </div>
+            <div class="layui-form-mid">cm</div>
+
+            <div class="layui-form-mid">高</div>
+            <div class="layui-input-inline">
+                <input type="text" name="Heigth" lay-verify="" autocomplete="off" placeholder="" class="layui-input" value="@Model.Volume.Heigth">
+            </div>
+            <div class="layui-form-mid">cm</div>
+
+        </div>
+
+        <layuiFormEdit asp-for="Brand" text="品牌" />
+        <layuiFormEdit asp-for="Description" text="品名" />
+        <layuiSelect asp-for="TargetCountry" data="@formStateAdress" input-display="LayuiFormItem" text="目的国家" />
+
+        if (Model.FormType == (int)FormType.Container)
+        {
+            <layuiFormEdit asp-for="ShipAddress" text="发货地址" />
+        }
+
+        <layuiSelect asp-for="ClaimGoods" data="@formStateClaimGoods" input-display="LayuiFormItem" text="取货方式" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1" value="@Model.Date.ToString("yyyy-MM-dd")">
+            </div>
+        </div>
+    }
+
+    @if (Model.FormType == (int)FormType.BookDelivery || Model.FormType == (int)FormType.BookPay)
+    {
+
+        <layuiFormEdit asp-for="OrderNo" text="订单号" />
+
+        <layuiSelect asp-for="Aging" data="@formAging" input-display="LayuiFormItem" text="时效" />
+
+        <layuiSelect asp-for="TargetCountry" data="@formStateAdress" input-display="LayuiFormItem" text="目的国家" />
+
+        if (Model.FormType == (int)FormType.BookPay)
+        {
+            <layuiSelect asp-for="Payment" data="@payment" input-display="LayuiFormItem" text="付款方式" />
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">选择日期</label>
+                <div class="layui-input-block">
+                    <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1" value="@Model.Date.ToString("yyyy-MM-dd")">
+                </div>
+            </div>
+        }
+
+
+        if (Model.FormType == (int)FormType.BookDelivery)
+        {
+            <layuiSelect asp-for="ClaimGoods" data="@formStateClaimGoods" input-display="LayuiFormItem" text="取货方式" />
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">选择日期</label>
+                <div class="layui-input-block">
+                    <input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" lay-key="1" value="@Model.Date.ToString("yyyy-MM-dd")">
+                </div>
+            </div>
+
+            <layuiSelect asp-for="TimeQuantum" data="@timeQuantum" input-display="LayuiFormItem" text="选择时间段" />
+
+            <layuiSelect asp-for="TimeSection" data="@timeSection" input-display="LayuiFormItem" text="时间区间" />
+        }
+    }
+
+    @if (feedbackList.Any())
+    {
+        <div id="Desc_div" class="layui-form-item">
+            <ul class="layui-timeline">
+                @foreach (var item in feedbackList.OrderBy(c => c.CreateDateTime).ToList())
+                {
+                    if (!string.IsNullOrEmpty(item.Remark))
+                    {
+                        <li class="layui-timeline-item">
+                            <i class="layui-icon layui-timeline-axis"></i>
+                            <div class="layui-timeline-content layui-text">
+                                <h3 class="layui-timeline-title">@(item.CreateDateTime)</h3>
+                                <p>
+                                    操作人：@(item.AdministratorName + " ，反馈信息：" + item.Remark)
+                                </p>
+                            </div>
+                        </li>
+                    }
+
+                }
+            </ul>
+        </div>
+    }
+
+    @if (Model.Status != FormStatus.EndConfirm || Model.Status != FormStatus.Confirmed)
+    {
+        <div id="Desc_div" class="layui-form-item">
+            <label class="layui-form-label">消息内容</label>
+            <div class="layui-input-block">
+                <input class="layui-input" id="" name="feedback" text="消息内容" type="text" />
+            </div>
+        </div>
+    }
+
+    <div class="layui-layer-btn layui-layer-btn-" style="margin-top:150px">
+        @if (Model.Status == FormStatus.EndConfirm || Model.Status == FormStatus.Confirmed)
+        {
+
+            <a class="layui-btn layui-layer-btn1 layui-bg-red" lay-submit lay-filter="close" id="close" style="height: auto;padding: 5px 20px;border: none;overflow: auto;">关闭</a>
+        }
+
+        @if (Model.Status == FormStatus.NoLook || Model.Status == FormStatus.Looked || Model.Status == FormStatus.Back)
+        {
+            <LayuiButton class="layui-btn layui-layer-btn1 layui-bg-red"  id="backConfirm" style="height: auto;padding: 5px 20px;border: none;overflow: auto;" PermCode="@PermCode.Form_warehouseOperation.GetHashCode()">退回</LayuiButton>
+            <LayuiButton class="layui-btn layui-layer-btn1 layui-bg-green"  id="confirmed" style="height: auto;padding: 5px 20px;border: none;overflow: auto;" PermCode="@PermCode.Form_warehouseOperation.GetHashCode()">确认</LayuiButton>
+        }
+
+    </div>
+</form>
+
+
+@section Scripts{
+
+
+    <script src="~/framework/lzr/dist/lrz.bundle.js"></script>
+    <script src="~/signalr/signalr.min.js"></script>
+
+    <script>
+        var isComplete = false;
+        var islook = '@isLook';//用于给客服更新已查看
+        var AdministratorName = '@administratorName';
+        var Id = $("#Id").val();
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl('/FormChat')
+            .build();
+        connection.on(connectComplete);
+        connection.onclose(reConnect);
+
+        connection.start().then(function () {
+            if (islook == "True") { //为true才需要推送已查看消息
+                connection.invoke('FormTakeTn');
+                connection.invoke('FormPopup', "已查看", Id, AdministratorName);
+
+            }
+
+        }).catch(error => {
+            layer.msg('通讯服务器已断开，请重试刷新', {
+                icon: 2
+                , time: 2000,
+                end: function () {
+                    window.location.reload();
+                }
+            });
+
+        });
+
+        layui.use(['laydate'],
+            function () {
+                var laydate = layui.laydate;
+
+                //执行一个laydate实例
+                laydate.render({
+                    elem: '#date' //指定元素
+                });
+
+
+                //各种基于事件的操作，下面会有进一步介绍
+            });
+        $(function () {
+            $("#close").click(function () {
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+
+            });
+            $("#backConfirm").click(function () {
+                $("#Operation").val('@((int)(FormStatus.Back))');
+                layui.form.on('submit(backConfirm)',
+                    function () {
+                        top.layer.load(1, { offset: '300px' });
+                        $('#house-form-admin').ajaxSubmit({
+                            success: function (r) {
+                                if (r.message) {
+                                    msg = r.message;
+                                }
+                                if (r.success) {
+                                    timeout();
+                                    if (connection.state === 0) {  //如果断了，需要重新连接
+                                        connection.start().then(function () {
+
+                                            connection.invoke('FormTakeTn');
+                                            connection.invoke('FormPopup', '退回', Id, AdministratorName);
+                                        }).catch(error => {
+                                            layer.msg('通讯服务器已断开，请重试刷新', {
+                                                icon: 2
+                                                , time: 3000,
+                                                end: function () {
+                                                    window.location.reload();
+                                                }
+                                            });
+
+                                        });
+     
+                                    }
+                                    else
+                                    {
+                                        connection.invoke('FormTakeTn');
+                                        connection.invoke('FormPopup', '退回', Id, AdministratorName);
+                                    }
+                      
+                                    layer.msg(msg, {
+                                        icon: 1
+                                        , time: 1200
+                                    }, function () {
+                                        top.layer.closeAll('loading');
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        parent.layer.close(index);
+
+                                    });
+                                } else {
+                                    timeout(); 
+                                    layer.msg(msg, {
+                                        icon: 2
+                                        , time: 2000
+                                    });
+                                }
+                            },
+                            error: function () {
+                                timeout(); 
+                                layer.msg(msg, {
+                                    icon: 0
+                                    , time: 2000
+                                });
+                            }
+           
+                        });
+
+                    })
+            });
+
+            $("#confirmed").click(function () {
+                $("#Operation").val('@((int)(FormStatus.Confirmed))');
+
+                layui.form.on('submit(confirmed)',
+                    function () {
+                        top.layer.load(1, { offset: '300px' });
+                        $('#house-form-admin').ajaxSubmit({
+                            success: function (r) {
+                                if (r.message) {
+                                    msg = r.message;
+                                }
+                                if (r.success) {
+                                    timeout();
+                                    if (connection.state === 0) {
+                                        connection.start().then(function(){
+                                            connection.invoke('FormTakeTn');
+                                            connection.invoke('FormPopup', '已确认', Id, AdministratorName);
+
+                                        }).catch(error => {
+                                            layer.msg('通讯服务器已断开，请重试刷新', {
+                                                icon: 2
+                                                , time: 3000,
+                                                end: function () {
+                                                    window.location.reload();
+                                                }
+                                            });
+
+                                        });
+                   
+                                    }
+                                    else {
+                                        connection.invoke('FormTakeTn');
+                                        connection.invoke('FormPopup', '已确认', Id, AdministratorName);
+                                    }
+                                    layer.msg(msg, {
+                                        icon: 1
+                                        , time: 1200
+                                    }, function () {
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        parent.layer.close(index);
+
+                                    });
+                                } else {
+                                    timeout();
+                                    layer.msg(msg, {
+                                        icon: 2
+                                        , time: 2000
+                                    },);
+                                }
+                            },
+                            error: function () {
+                                timeout();
+                                layer.msg(msg, {
+                                    icon: 0
+                                    , time: 2000
+                                });
+                            }
+                        });
+                    });
+
+            });
+
+        });
+
+        function reConnect() {
+            if (connection.state === 0) {
+                connection.start();
+            }
+        }
+
+        function connectComplete() {
+                isComplete =true;
+         
+        }
+
+        function timeout() {
+            setTimeout(function () {
+                top.layer.closeAll('loading');
+            }, 2000);
+        }
+    </script>
+}

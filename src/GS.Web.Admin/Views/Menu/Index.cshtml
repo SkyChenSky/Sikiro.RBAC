@@ -1,0 +1,143 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+@using Sikiro.Web.Admin.Permission
+@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.Menu.MenuParams>
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all" asp-append-version="true">
+}
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">搜索</label>
+                    <div class="layui-input-block">
+                        <input id="edt-search" type="text" placeholder="输入关键字" class="layui-input" />
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button id="btn-search" class="layui-btn layuiadmin-btn-admin" lay-submit lay-filter="LAY-user-back-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton id="btn-add" class="layui-btn layuiadmin-btn-admin" PermCode="@PermCode.Menu_AddEdit.GetHashCode()" data-type="add">添加</LayuiButton>
+            </div>
+
+            <table id="Menu-table" class="layui-table" lay-filter="Menu-table" PermCode="@PermCode.Menu_List.GetHashCode()"></table>
+            <script type="text/html" id="oper-col">
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Menu_AddEdit.GetHashCode()" lay-event="edit">编辑</LayuiButton>
+                {{#  if(d.url != '' && d.url != null){ }}
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Menu_Relate.GetHashCode()" lay-event="relate">关联</LayuiButton>
+                {{# } }}
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" PermCode="@PermCode.Menu_Delete.GetHashCode()" lay-event="del">删除</LayuiButton>
+            </script>
+
+            <script type="text/html" id="icon-col">
+                <i class="layui-icon {{d.icon}}"></i>
+            </script>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+
+    <script>
+
+        $(function () {
+            var treetable = layui.treetable;
+            var table = layui.table;
+            // 渲染表格
+            var renderTable = function () {
+                layer.load(2);
+                treetable.render({
+                    treeColIndex: 1,
+                    treeSpid: "",
+                    treeIdName: 'id',
+                    treePidName: 'pId',
+                    treeDefaultClose: false,
+                    treeLinkage: false,
+                    elem: '#Menu-table',
+                    url: '/Menu/List',
+                    page: false,
+                    cols: [
+                        [
+                            { templet: '#oper-col', title: '操作', width: 160 },
+                            { field: 'name', title: '菜单名称' },
+                            { field: 'icon', width: 100, templet: '#icon-col', title: '菜单图标', align: 'center' },
+                            { field: 'url', title: '菜单路径' },
+                            { field: 'order', title: '排序' }
+                        ]
+                    ],
+                    done: function () {
+                        layer.closeAll('loading');
+                    }
+                });
+            };
+
+            renderTable();
+
+            var del = function (id) {
+                $.Delete("/Menu/Delete",
+                    { id: id },
+                    function () {
+                        renderTable();
+                    });
+            }
+            var edit = function (id) {
+                $.openLayer("编辑菜单",
+                    "/Menu/AddEdit?id=" + id,
+                    function () {
+                        renderTable();
+                    }, 480, 480);
+            }
+            var relate = function (id) {
+                $.openLayer("关联功能",
+                    "/Menu/Relate?id=" + id,
+                    function () {
+                        renderTable();
+                    }, 700, 480);
+            }
+
+            table.on('tool(Menu-table)',
+                function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'edit') {
+                        edit(data.id);
+                    } else if (obj.event === 'del') {
+                        del(data.id);
+                    }
+                    else if (obj.event === 'relate') {
+                        relate(data.id);
+                    }
+                });
+
+            $('#btn-add').on("click",
+                function () {
+                    $.openLayer("新增菜单",
+                        "/Menu/AddEdit",
+                        function () {
+                            renderTable();
+                        }, 480, 480);
+                });
+
+            $('#btn-search').click(function () {
+                var keyword = $('#edt-search').val();
+                $("#Menu-table").treeTableSearch(keyword);
+            });
+        });
+
+
+    </script>
+}

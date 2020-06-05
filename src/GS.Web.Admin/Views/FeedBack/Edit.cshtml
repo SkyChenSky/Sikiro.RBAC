@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Edit";
+}
+
+@model Sikiro.Web.Admin.Models.FeedBack.EditFeedBack
+<layuiForm id="layuiadmin-form-admin" asp-controller="FeedBack" asp-action="EditAJax" style="padding: 20px">
+    <input type="hidden" value="@(Model.Id)" name="id" id="prdutsId">
+
+    <input style="display:none" />
+
+    <layuiFormEdit asp-for="Reply" />
+</layuiForm>

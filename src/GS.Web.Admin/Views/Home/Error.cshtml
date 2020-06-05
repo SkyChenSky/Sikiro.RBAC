@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+@section Head{
+    <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
+}
+<div class="layui-fluid">
+    <div class="layadmin-tips">
+        <i class="layui-icon" face>&#xe664;</i>
+
+        <div class="layui-text" style="font-size: 20px;">
+            @ViewBag.ErrorMessage
+        </div>
+
+        @if ((bool)ViewBag.isShowButton)
+        {
+            <p style="text-align: center;"><a href="/Account/Logout" class="layui-btn layuiadmin-btn-admin" style="text-align: center; ">退出登陆</a></p>
+        }
+    </div>
+</div>
+
