@@ -22,8 +22,6 @@ namespace Sikiro.Web.Admin.Permission
         Administrator_ResetPassword = 10006,
         [Display(Name = "管理员批量设置状态")]
         Administrator_BatchSetStatus = 10007,
-        [Display(Name = "管理员分配权限")]
-        Administrator_Jurisdiction = 10008,
         #endregion
 
         #region 岗位

@@ -111,6 +111,11 @@ namespace Sikiro.Web.Admin.Controllers
         }
         #endregion
 
+        #region 修改密码
+        /// <summary>
+        /// 修改密码页
+        /// </summary>
+        /// <returns></returns>
         public IActionResult ChangePassword()
         {
             return View();
@@ -131,5 +136,7 @@ namespace Sikiro.Web.Admin.Controllers
 
             return Json(ServiceResult.IsFailed("用户不存在"));
         }
+
+        #endregion
     }
 }

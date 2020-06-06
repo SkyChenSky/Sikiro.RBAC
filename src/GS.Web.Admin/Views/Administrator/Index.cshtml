@@ -1,8 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Index";
 }
-@using Sikiro.Web.Admin.Permission
-@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.Administrator.ListSearchParams>
+@model PageListParams<Sikiro.Web.Admin.Models.Administrator.ListSearchParams>
 @section Head{
     <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
 }
@@ -15,15 +14,13 @@
 
                 <layuiInput class="layui-col-md3" asp-for="Params.RealName" text="姓名" placeholder="请输入" />
 
-                <layuiSelect class="layui-col-md3" asp-for="Params.Type " text="账号类型" defaultText="请选择" />
-
                 <layuiSelect class="layui-col-md3" asp-for="Params.Status " text="状态" defaultText="请选择" />
+                
+                <layuiSelect class="layui-col-md3" asp-for="Params.DepartmentId " url="/Department/DepartmentSelect" text="部门" defaultText="请选择" />
 
             </div>
 
             <div class="layui-form-item">
-
-                <layuiSelect class="layui-col-md3" asp-for="Params.DepartmentId " url="/Department/DepartmentSelect" text="部门" defaultText="请选择" />
 
                 <layuiSelect class="layui-col-md3" asp-for="Params.RoleId" url="/Role/RoleSelect" text="角色" defaultText="请选择" />
 
@@ -46,7 +43,6 @@
                 {{#  if(d.statusForInt != -1){ }}
                 <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_Edit.GetHashCode()" lay-event="edit">编辑</LayuiButton>
                 <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_ResetPassword.GetHashCode()" lay-event="reset">重置密码</LayuiButton>
-                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" PermCode="@PermCode.Administrator_Jurisdiction.GetHashCode()" lay-event="setperm">分配权限</LayuiButton>
                 {{# } }}
                 {{#  if(d.statusForInt == 1){ }}
                 <LayuiButton class="layui-btn layui-btn-xs layui-btn-danger layui-btn-mini" PermCode="@PermCode.Administrator_Stop.GetHashCode()" lay-event="stop">停用</LayuiButton>
