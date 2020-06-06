@@ -20,11 +20,6 @@ namespace Sikiro.Web.Admin.Models.Administrator
         public EAdministratorStatus? Status { get; set; }
 
         /// <summary>
-        /// 管理员类型
-        /// </summary>
-        public EAdminType? Type { get; set; }
-
-        /// <summary>
         /// 部门ID
         /// </summary>
         public string DepartmentId { get; set; }

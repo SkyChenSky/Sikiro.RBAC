@@ -62,12 +62,6 @@ namespace Sikiro.Web.Admin.Models.Administrator
         public EAdministratorStatus Status { get; set; }
 
         /// <summary>
-        /// 管理员类型
-        /// </summary>
-        [Display(Name = "类型")]
-        public EAdminType Type { get; set; }
-
-        /// <summary>
         /// 密码
         /// </summary>
         [Display(Name = "密码")]

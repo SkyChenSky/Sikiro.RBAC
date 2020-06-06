@@ -45,6 +45,7 @@ namespace Sikiro.Repository.Admin
 
         private Expression<Func<T, bool>> GetWhere<T>(Expression<Func<T, bool>> predicate) where T : MongoEntity, ITenant
         {
+            //todo 删除
             if (IsSuper())
                 return predicate;
 
@@ -52,7 +53,7 @@ namespace Sikiro.Repository.Admin
             ObjectId? companyId = null;
 
             if (userId.HasValue)
-                companyId = _mongoRepository.Get<Administrator, ObjectId?>(a => a.Id == userId.Value, a => a.CompanyId);
+                companyId = _mongoRepository.Get<Administrator, ObjectId?>(a => a.Id == userId.Value, a => a.DepartmentId);
 
             if (predicate == null)
                 predicate = ExpressionBuilder.Init<T>();
@@ -68,7 +69,7 @@ namespace Sikiro.Repository.Admin
             ObjectId? companyId = null;
 
             if (userId.HasValue)
-                companyId = _mongoRepository.Get<Administrator, ObjectId?>(a => a.Id == userId.Value, a => a.CompanyId);
+                companyId = _mongoRepository.Get<Administrator, ObjectId?>(a => a.Id == userId.Value, a => a.DepartmentId);
 
             if (entity.CompanyId == companyId)
             {

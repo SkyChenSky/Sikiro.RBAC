@@ -33,9 +33,6 @@ namespace Sikiro.Web.Admin.Models.Account
 
         public int StatusForInt { get; set; }
 
-        [TableCols(Tile = "管理员类型")]
-        public string Type { get; set; }
-
         [TableCols(Tile = "创建时间")]
         public DateTime CreateDateTime { get; set; }
     }

@@ -261,18 +261,17 @@ namespace Sikiro.Service.System
             var list = _mongoRepository.ToList<Menu>(a => true, a => a.Desc(b => b.Order), null);
             if (!admin.IsSuper)
             {
-                list = GetAdminMenu(list, admin.RoleIds, admin.MenuId).ToList().DistinctBy(a => a.Id).ToList();
+                list = GetAdminMenu(list, admin.RoleIds).ToList().DistinctBy(a => a.Id).ToList();
             }
 
             return RecursionChatReplyList(list, null);
         }
 
-        private IEnumerable<Menu> GetAdminMenu(List<Menu> menuList, ObjectId[] roleIds, ObjectId[] adminMenuIds)
+        private IEnumerable<Menu> GetAdminMenu(List<Menu> menuList, ObjectId[] roleIds)
         {
             var menuIdsInRole = _mongoRepository.ToList<Role>(a => roleIds.Contains(a.Id)).SelectMany(a => a.MenuId);
-            var menuIds = adminMenuIds.Concat(menuIdsInRole).ToArray().Distinct();
 
-            return RecursionMenuListOfParentId(menuList, null, menuIds).OrderByDescending(b => b.Order);
+            return RecursionMenuListOfParentId(menuList, null, menuIdsInRole).OrderByDescending(b => b.Order);
         }
 
         private IEnumerable<Menu> RecursionMenuListOfParentId(IEnumerable<Menu> list, ObjectId? id,

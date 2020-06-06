@@ -12,11 +12,6 @@ namespace Sikiro.Entity.System
     public class Administrator : MongoEntity
     {
         /// <summary>
-        /// 企业Id
-        /// </summary>
-        public ObjectId CompanyId { get; set; }
-
-        /// <summary>
         /// 真实姓名
         /// </summary>
         public string RealName { get; set; }
@@ -69,44 +64,6 @@ namespace Sikiro.Entity.System
         public EAdministratorStatus Status { get; set; }
 
         /// <summary>
-        /// 管理员类型
-        /// </summary>
-        public EAdminType Type { get; set; }
-
-        /// <summary>
-        /// 操作权限数组
-        /// </summary>
-        private ObjectId[] _menuActionIds;
-
-        public ObjectId[] MenuActionIds
-        {
-            set => _menuActionIds = value;
-            get => _menuActionIds ?? new ObjectId[] { };
-        }
-
-        /// <summary>
-        /// 菜单Id
-        /// </summary>
-        private ObjectId[] _dataAccessIds;
-
-        public ObjectId[] DataAccessIds
-        {
-            set => _dataAccessIds = value;
-            get => _dataAccessIds ?? new ObjectId[] { };
-        }
-
-        /// <summary>
-        /// 菜单Id
-        /// </summary>
-        private ObjectId[] _menuIds;
-
-        public ObjectId[] MenuId
-        {
-            set => _menuIds = value;
-            get => _menuIds ?? new ObjectId[] { };
-        }
-
-        /// <summary>
         /// 是否本系统超级管理员
         /// </summary>
         public bool IsSuper { get; set; }
@@ -122,27 +79,18 @@ namespace Sikiro.Entity.System
         public DateTime UpdateDateTime { get; set; }
     }
 
+    /// <summary>
+    /// 管理员状态
+    /// </summary>
     public enum EAdministratorStatus
     {
-        [Display(Name = "禁止登录")]
-        Stop = -20,
-        [Display(Name = "已注销")]
-        Cancel = -10,
+        [Display(Name = "已停用")]
+        Stop = -1,
         [Display(Name = "已删除")]
         Deleted = -1,
         [Display(Name = "未激活")]
         NotActive = 0,
         [Display(Name = "正常")]
         Normal = 1,
-    }
-
-    public enum EAdminType
-    {
-        [Display(Name = "系统管理账号")]
-        Admin = 0,
-        [Display(Name = "企业客户账号")]
-        Company = 1,
-        [Display(Name = "个人用户账号")]
-        Person = 1
     }
 }

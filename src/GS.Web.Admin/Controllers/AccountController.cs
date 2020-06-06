@@ -103,7 +103,6 @@ namespace Sikiro.Web.Admin.Controllers
                     NickName = result.RealName,
                     customServiceId = CurrentUserData.UserId,
                     Logo = "/upload/userlogo.jpg",
-                    result.CompanyId,
                     Host = _iConfiguration["ImServerUrl"]
                 });
             }

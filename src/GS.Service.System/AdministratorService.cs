@@ -41,8 +41,6 @@ namespace Sikiro.Service.System
                 return ServiceResult.IsFailed("该用户已禁止登陆");
             if (user.Status == EAdministratorStatus.NotActive)
                 return ServiceResult.IsFailed("该用户未激活");
-            if (user.Status == EAdministratorStatus.Cancel)
-                return ServiceResult.IsFailed("该用户已注销");
 
             var passwordForMd5 = password.EncodePassword(user.Id.ToString());
             if (user.Password != passwordForMd5)
@@ -52,7 +50,6 @@ namespace Sikiro.Service.System
             {
                 UserId = user.Id.ToString(),
                 UserName = user.UserName,
-                CompanyId = user.CompanyId.ToString(),
                 RealName = user.RealName,
                 IsSuper = user.IsSuper
             });
@@ -90,7 +87,9 @@ namespace Sikiro.Service.System
 
         public ServiceResult Add(Administrator administrator)
         {
-            administrator.Password = administrator.Password.EncodePassword(administrator.Id.ToString());
+            var userId = ObjectId.GenerateNewId();
+            administrator.Id = userId;
+            administrator.Password = administrator.Password.EncodePassword(userId.ToString());
             administrator.CreateDateTime = DateTime.Now;
             administrator.UpdateDateTime = DateTime.Now;
 
@@ -202,7 +201,7 @@ namespace Sikiro.Service.System
         private List<MenuAction> SetAdmin(Administrator admin)
         {
             var roles = _mongoRepository.ToList<Role>(a => admin.RoleIds.Contains(a.Id));
-            var menuActionInRoles = roles.SelectMany(a => a.MenuActionIds).Concat(admin.MenuActionIds ?? new ObjectId[] { }).Distinct();
+            var menuActionInRoles = roles.SelectMany(a => a.MenuActionIds).Distinct();
 
             var menuActionInUserList = _mongoRepository.ToList<MenuAction>(a => menuActionInRoles.Contains(a.Id));
 
@@ -219,8 +218,8 @@ namespace Sikiro.Service.System
         private string[] GetAdministratorUrl(Administrator admin)
         {
             var roles = _mongoRepository.ToList<Role>(a => admin.RoleIds.Contains(a.Id));
-            var menuInRoles = roles.SelectMany(a => a.MenuId).Concat(admin.MenuId ?? new ObjectId[] { }).Distinct();
-            var menuActionInRoles = roles.SelectMany(a => a.MenuActionIds).Concat(admin.MenuActionIds ?? new ObjectId[] { }).Distinct();
+            var menuInRoles = roles.SelectMany(a => a.MenuId).Distinct();
+            var menuActionInRoles = roles.SelectMany(a => a.MenuActionIds).Distinct();
 
             var menuInUser = _mongoRepository.ToList<Menu>(a => menuInRoles.Contains(a.Id)).Select(a => (a.Url??"").ToLower().Trim('/'));
             var menuActionInUserList = _mongoRepository.ToList<MenuAction>(a => menuActionInRoles.Contains(a.Id));
@@ -238,44 +237,9 @@ namespace Sikiro.Service.System
         /// <returns></returns>
         public ObjectId GetCompanyId(ObjectId adminId)
         {
+            //todo delete
             var model = _mongoRepository.Get<Administrator>(a => a.Id == adminId);
-            return model.CompanyId;
+            return new ObjectId();
         }
-
-        /// <summary>
-        /// 手机登录验证
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public ServiceResult LogonCheckCompany(string userName, string password)
-        {
-            var user = _mongoRepository.Get<Administrator>(a => a.UserName == userName && a.Status != EAdministratorStatus.Deleted);
-
-            if (user == null)
-                return ServiceResult.IsFailed("不存在该用户");
-            if (user.Type != EAdminType.Company)
-                return ServiceResult.IsFailed("该账户类型无权限登录");
-            if (user.Status == EAdministratorStatus.Stop)
-                return ServiceResult.IsFailed("该用户已禁止登陆");
-            if (user.Status == EAdministratorStatus.NotActive)
-                return ServiceResult.IsFailed("该用户未激活");
-            if (user.Status == EAdministratorStatus.Cancel)
-                return ServiceResult.IsFailed("该用户已注销");
-
-            var passwordForMd5 = password.EncodePassword(user.Id.ToString());
-            if (user.Password != passwordForMd5)
-                return ServiceResult.IsFailed("密码错误");
-
-            return ServiceResult.IsSuccess("登录成功", new AdministratorData
-            {
-                UserId = user.Id.ToString(),
-                UserName = user.UserName,
-                CompanyId = user.CompanyId.ToString(),
-                RealName = user.RealName,
-                IsSuper = user.IsSuper
-            });
-        }
-
     }
 }

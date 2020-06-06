@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Sikiro.Common.Utils;
 using Sikiro.Entity.System;
 using Sikiro.Nosql.Mongo;
@@ -47,6 +48,7 @@ namespace Sikiro.Web.Admin.Permission
 
             //反射被标记的Controller和Action
             _mongoRepository = (MongoRepository)app.ApplicationServices.GetService(typeof(MongoRepository));
+
             var permList = new List<MenuAction>();
             var actions = typeof(PermissionUtil).Assembly.GetTypes()
                 .Where(t => typeof(Controller).IsAssignableFrom(t) && !t.IsAbstract)
@@ -61,7 +63,7 @@ namespace Sikiro.Web.Admin.Permission
                     continue;
 
                 var codes = permissionAttribute.Select(a => ((PermissionAttribute)a).Code).ToArray();
-                var controllerName = action.ReflectedType.Name.Replace("Controller", "").ToLower();
+                var controllerName = action?.ReflectedType?.Name.Replace("Controller", "").ToLower();
                 var actionName = action.Name.ToLower();
 
                 foreach (var item in codes)
@@ -92,6 +94,11 @@ namespace Sikiro.Web.Admin.Permission
             _mongoRepository.BatchAdd(permList);
         }
 
+        /// <summary>
+        /// 获取当前路径
+        /// </summary>
+        /// <param name="filterContext"></param>
+        /// <returns></returns>
         public static string CurrentUrl(HttpContext filterContext)
         {
             var url = filterContext.Request.Path.ToString().ToLower().Trim('/');

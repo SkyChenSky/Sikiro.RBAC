@@ -225,8 +225,6 @@ namespace Sikiro.Web.Admin.Controllers
         [Permission(PermCode.Role_Dete)]
         public IActionResult RoleRemove(string roleId)
         {
-
-
             var model = _administratorService.GetByRoleId(roleId.ToObjectId());
             if (model != null)
             {
@@ -234,10 +232,11 @@ namespace Sikiro.Web.Admin.Controllers
             }
             var json = _roleService.Delete(c => c.Id == roleId.ToObjectId());
             return Json(json);
-
         }
 
         #endregion
+
+        #region 岗位下拉框
 
         /// <summary>
         /// 岗位下拉框
@@ -255,5 +254,6 @@ namespace Sikiro.Web.Admin.Controllers
             return Json(selectList);
         }
 
+        #endregion
     }
 }
