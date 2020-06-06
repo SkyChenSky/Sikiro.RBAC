@@ -7,7 +7,7 @@ namespace Sikiro.Web.Admin.Permission
     /// </summary>
     public enum PermCode : int
     {
-        #region 管理员-100
+        #region 管理员
         [Display(Name = "管理员列表")]
         Administrator_List = 10001,
         [Display(Name = "管理员添加")]

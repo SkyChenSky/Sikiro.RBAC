@@ -71,7 +71,7 @@ namespace Sikiro.Web.Admin.Controllers
 
             ViewBag.MenuList = selectList;
 
-            ViewBag.IconList = AccountHelper.GetLableList();
+            ViewBag.IconList = LableHelper.GetLableList();
 
             var menu = _menuService.GetById(id);
             if (menu == null)

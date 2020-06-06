@@ -135,7 +135,13 @@ namespace Sikiro.Service.System
 
             return ServiceResult.IsSuccess("重置密码完成");
         }
-
+        
+        /// <summary>
+        /// 密码加密
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public string EncodePassword(string userId, string password)
         {
             return (password.EncodeMd5String() + userId).EncodeMd5String();
@@ -194,11 +200,16 @@ namespace Sikiro.Service.System
             if (admin == null)
                 return new List<int>();
 
-            var list = admin.IsSuper ? SetSuper(admin) : SetAdmin(admin);
+            var list = admin.IsSuper ? GetSuperMenuAction() : GetAdminMenuAction(admin);
             return list.Select(a => a.Code);
         }
 
-        private List<MenuAction> SetAdmin(Administrator admin)
+        /// <summary>
+        /// 获取普通管理员所拥有的权限
+        /// </summary>
+        /// <param name="admin"></param>
+        /// <returns></returns>
+        private List<MenuAction> GetAdminMenuAction(Administrator admin)
         {
             var roles = _mongoRepository.ToList<Role>(a => admin.RoleIds.Contains(a.Id));
             var menuActionInRoles = roles.SelectMany(a => a.MenuActionIds).Distinct();
@@ -208,13 +219,22 @@ namespace Sikiro.Service.System
             return menuActionInUserList;
         }
 
-        private List<MenuAction> SetSuper(Administrator admin)
+        /// <summary>
+        /// 获取超级管理员所拥有的权限
+        /// </summary>
+        /// <returns></returns>
+        private List<MenuAction> GetSuperMenuAction()
         {
             var menuActionInUserList = _mongoRepository.ToList<MenuAction>(a => true);
 
             return menuActionInUserList.ToList();
         }
 
+        /// <summary>
+        /// 获取管理员可访问的路径
+        /// </summary>
+        /// <param name="admin"></param>
+        /// <returns></returns>
         private string[] GetAdministratorUrl(Administrator admin)
         {
             var roles = _mongoRepository.ToList<Role>(a => admin.RoleIds.Contains(a.Id));
@@ -228,18 +248,6 @@ namespace Sikiro.Service.System
             var allUrl = menuInUser.Concat(menuActionInUser);
 
             return allUrl.ToArray();
-        }
-
-        /// <summary>
-        ///获得管理员对应的CompanyId
-        /// </summary>
-        /// <param name="adminId"></param>
-        /// <returns></returns>
-        public ObjectId GetCompanyId(ObjectId adminId)
-        {
-            //todo delete
-            var model = _mongoRepository.Get<Administrator>(a => a.Id == adminId);
-            return new ObjectId();
         }
     }
 }

@@ -81,11 +81,6 @@
                     $("#btn-submit").click();
                 }, 480, 200);
             }
-            var setperm = function (id) {
-                $.openLayer("分配权限", "/administrator/Jurisdiction?id=" + id, function () {
-                    $("#btn-submit").click();
-                }, 800, 500);
-            }
 
             var batchSetStatus = function (ids) {
                 var value = jQuery.param({ id: ids }, true);
