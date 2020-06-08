@@ -43,7 +43,9 @@ namespace Sikiro.Web.Admin.Permission
         [Display(Name = "角色管理编辑")]
         Role_Edit = 10014,
         [Display(Name = "角色管理删除")]
-        Role_Dete = 10015,
+        Role_Delete = 10015,
+        [Display(Name = "角色管理权限")]
+        Role_Jurisdiction = 10016,
         #endregion
 
         #region 组织管理

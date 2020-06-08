@@ -13,11 +13,6 @@ namespace Sikiro.Entity.System
         public string Name { get; set; }
 
         /// <summary>
-        /// 数据权限
-        /// </summary>
-        public ObjectId[] DataAccessIds { get; set; }
-
-        /// <summary>
         /// 菜单Id
         /// </summary>
         public ObjectId[] MenuId { get; set; }
@@ -30,11 +25,6 @@ namespace Sikiro.Entity.System
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime CreateTime { get; set; }
-
-        /// <summary>
-        /// 创建人的UerID
-        /// </summary>
-        public ObjectId UserId { get; set; }
+        public DateTime CreateDateTime { get; set; }
     }
 }

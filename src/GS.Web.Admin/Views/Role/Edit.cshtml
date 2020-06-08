@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+@model Sikiro.Web.Admin.Models.Role.EditRoleVo
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Role" asp-action="Edit" style="padding: 20px">
+
+    <input asp-for="Id" type="hidden"/>
+
+    <layuiFormEdit asp-for="Name"/>
+
+</layuiForm>

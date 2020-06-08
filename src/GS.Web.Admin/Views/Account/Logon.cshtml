@@ -11,9 +11,9 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link href="~/layuiadmin/layui/css/layui.css" rel="stylesheet" />
-    <link href="~/layuiadmin/style/admin.css" rel="stylesheet" />
-    <link href="~/layuiadmin/style/login.css" rel="stylesheet" />
+    <link href="~/layuiadmin/layui/css/layui.css" rel="stylesheet" asp-append-version="true"  />
+    <link href="~/layuiadmin/style/admin.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/layuiadmin/style/login.css" rel="stylesheet" asp-append-version="true"  />
     <style>
         .layadmin-user-login-main {
             color: #000;
@@ -26,7 +26,7 @@
 
         <div class="layadmin-user-login-main" style="background: rgba(255,255,255,.8);">
             <div class="layadmin-user-login-box layadmin-user-login-header">
-                <h2>葛氏后台管理系统</h2>
+                <h2>基于角色控制的管理系统</h2>
             </div>
             <form method="post" action="/account/logon" class="layadmin-user-login-box layadmin-user-login-body layui-form">
                 <div class="layui-form-item">
@@ -44,9 +44,9 @@
         </div>
     </div>
 
-    <script src="/layuiadmin/layui/layui.all.js"></script>
-    <script src="~/jquery/jquery.js"></script>
-    <script src="~/jquery/jquery.form.js"></script>
+    <script src="/layuiadmin/layui/layui.all.js" asp-append-version="true" ></script>
+    <script src="~/jquery/jquery.js" asp-append-version="true" ></script>
+    <script src="~/jquery/jquery.form.js" asp-append-version="true" ></script>
     <script src="~/app.js"></script>
     <script>
 

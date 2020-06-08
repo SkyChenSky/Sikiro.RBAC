@@ -6,6 +6,7 @@ using System.Text;
 using MongoDB.Bson;
 using Sikiro.Entity.System;
 using Sikiro.Nosql.Mongo;
+using Sikiro.Service.System.Const;
 using Sikiro.Tookits.Base;
 using Sikiro.Tookits.Interfaces;
 
@@ -42,14 +43,24 @@ namespace Sikiro.Service.System
             return _mongoRepository.ToList<Department>(a => ids.Contains(a.Id));
         }
 
-        public void Add(Department entity)
+        public ServiceResult Add(Department entity)
         {
-            _mongoRepository.Add(entity);
+            var result = _mongoRepository.AddIfNotExist(a => a.Name == entity.Name, entity);
+
+            return result
+                ? ServiceResult.IsSuccess(AccountConstString.OperateSuccess)
+                : ServiceResult.IsFailed("已存在相同名称的部门");
         }
 
-        public void Update(Department entity)
+        public ServiceResult Update(Department entity)
         {
+            var isExists = _mongoRepository.Exists<Department>(a => a.Id != entity.Id && a.Name == entity.Name);
+            if (isExists)
+                return ServiceResult.IsSuccess("已存在相同名称的部门");
+
             _mongoRepository.Update(entity);
+
+            return ServiceResult.IsSuccess(AccountConstString.OperateSuccess);
         }
 
 
@@ -57,7 +68,6 @@ namespace Sikiro.Service.System
         {
             return _mongoRepository.Get(expression);
         }
-
 
         /// <summary>
         /// 获取全部列表

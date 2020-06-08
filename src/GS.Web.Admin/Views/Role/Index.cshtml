@@ -1,460 +1,74 @@
 ﻿@{
     ViewData["Title"] = "Index";
-    var roleList = (List<Role>)ViewBag.roleList;
-
-    string roleId = string.Empty;
-    var hrefRoleId = (string)ViewBag.roleId;
 }
-@using Sikiro.Entity.System
-@using Sikiro.Web.Admin.Permission
-@model Sikiro.Web.Admin.Models.PageListParams<Sikiro.Web.Admin.Models.ProductAging.ProductParams>
+
+@model PageListParams<Sikiro.Web.Admin.Models.Role.RoleParams>
 @section Head{
     <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
-    <style>
-        .roleList {
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .roleItem {
-            line-height: 40px;
-            height: 40px;
-            box-sizing: border-box;
-            font-size: 16px;
-            text-indent: 10px;
-        }
-
-            .roleItem:hover {
-                background: #009688;
-                color: #fff;
-            }
-
-            .roleItem.active {
-                background: #009688;
-                color: #fff;
-            }
-
-        .roleLegendTitle legend {
-            font-size: 16px !important;
-        }
-
-        .setAllRole {
-            line-height: 50px;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .setDepartmentRole {
-            padding-top: 10px;
-            line-height: 30px;
-        }
-
-        .setChildRole {
-            margin-left: 25px;
-        }
-
-        .editName, .editBtn {
-            display: none;
-        }
-
-            .editName.show, .editBtn.show {
-                display: inline-block;
-            }
-    </style>
-
 }
 
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
 
-<div class="layui-fluid" style="height:500px;">
-    <div class="layui-row  layui-col-space10" style="height: 100%;">
-        <div class="layui-col-md2 layui-col-sm2" style="height: 100%;">
-            <div class="layui-card" style="height: 100%;">
-                <div class="layui-card-header">组织机构列表</div>
-                <div class="layui-card-body">
-                    <button class="layui-btn layui-btn-fluid layui-bg-blue" id="CreatRole" PermCode="@PermCode.Role_Add.GetHashCode()">创建角色</button>
-                    <div class="roleList">
-                        @if (roleList.Any())
-                        {
-                            var num = 1;
-                            foreach (var item in roleList)
-                            {
-                                string active = "";
-                                if (num == 1)
-                                {
-                                    active = "active";
-                                    roleId = item.Id.ToString();
-                                }
-                                <div class="roleItem @(active)" data-roleid="@(item.Id)">@(item.Name)</div>
-                                num++;
-                            }
-                        }
+                <layuiInput asp-for="Params.RoleName" text="角色名称" placeholder="请输入" />
 
-                    </div>
-                </div>
+                <layuiTableFreshButton id="btn-submit" targetFormId="Role-table" />
             </div>
         </div>
-        <div class="layui-col-md10 layui-col-sm10">
-            <div class="layui-card">
-                <div class="layui-card-body">
-                    <fieldset class="layui-elem-field  layui-field-title site-title">
-                        <legend class="choise">超级管理员</legend>
-                    </fieldset>
-                    <blockquote class="layui-elem-quote">
-                        提示：<br>
-                        1.系统权限不可修改<br>
-                        2.数据权限是指该角色员工能够看到的数据。比如，功能权限添加了“入库管理”，数据权限   选择了“全公司，则该角色可以看到全公司的入库货物数据”。<br>
-                    </blockquote>
-                    <form action="/role/RoleAJax" method="post" id="roleRole" class="layui-form layuiadmin-card-header-auto layui-form-pane">
-                        <input type="hidden" name="roleId" id="roleId" />
-                        <input type="hidden" name="ShowCheckDataAjax" id="ShowCheckDataAjax" />
-                        <div class="layui-row  layui-form">
 
-                            <div class="layui-form-item ">
-                                <div class="layui-inline editName ">
-                                    <label class="layui-form-label" style="font-size: 16px;">角色名称</label>
-                                    <div class="layui-input-block">
-                                        <input type="text" name="roleName" required lay-verify="required" value="超级管理员" placeholder="请输入标题" autocomplete="off" class="layui-input editRoleName" id="roleName">
-                                    </div>
-                                </div>
-                                <div class="layui-inline editBtn show"> <LayuiButton type="button" class="layui-btn " PermCode="@PermCode.Role_Edit.GetHashCode()">编辑角色</LayuiButton></div>
-                                <div class="layui-inline editName editSave"><LayuiButton type="button" class="layui-btn layui-btn-normal" id="RoleSave" PermCode="@PermCode.Role_Edit.GetHashCode()">保存</LayuiButton></div>
-                                <div class="layui-inline deteleBtn show"> <LayuiButton type="button" class="layui-btn layui-bg-red" id="deteleBtn" PermCode="@PermCode.Role_Dete.GetHashCode()">删除角色</LayuiButton></div>
-                            </div>
-
-                        </div>
-
-                        <div class="layui-row layui-col-space30 layui-form" id="formState">
-                            <div class="layui-col-md9 layui-col-sm9" id="role">
-                                <fieldset class="layui-elem-field roleLegendTitle">
-                                    <legend>功能权限</legend>
-                                    <div class="layui-field-box">
-                                        <div class="setAllRole">
-                                            <input type="checkbox" class="allCheck" lay-filter='all' name="all" title="全部权限" lay-skin="primary">
-                                        </div>
-
-
-
-                                        <div class="" id="setRoleView">
-
-                                        </div>
-
-                                    </div>
-
-                                </fieldset>
-
-                            </div>
-                            <div class="layui-col-md3 layui-col-sm3">
-                                <fieldset class="layui-elem-field roleLegendTitle ">
-                                    <legend>数据权限</legend>
-                                    <div class="layui-field-box">
-                                        <div id="test1" style="width:290px;overflow-x: auto;overflow-y: hidden; padding-bottom:20px;"></div>
-                                    </div>
-                                </fieldset>
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <div class="layui-card-body" id="Role">
+            <div style="padding-bottom: 10px;">
+                <LayuiButton class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Role_Add.GetHashCode()">添加</LayuiButton>
             </div>
+
+            <layuiTable id="Role-table" lay-filter="Role-table" toolbar="admin-toolBar" colsModel="typeof(RoleVo)" asp-action="List" asp-controller="Role" PermCode="@PermCode.Role_List.GetHashCode()" />
+
+            <script type="text/html" id="admin-toolBar">
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="edit" PermCode="@PermCode.Role_Edit.GetHashCode()">编辑</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Role_Delete.GetHashCode()">删除</LayuiButton>
+            </script>
         </div>
     </div>
-
-
 </div>
-
-<script id="demo" type="text/html">
-    {{#  layui.each(d, function(index, item){ }}
-    <div class="setDepartmentRole" style="border-bottom: 1px dashed #ccc;padding-bottom: 13px;">
-        {{#  if(item.isSelect){ }}
-        <input class="parent" lay-filter='other' type="checkbox" name="MenuIds" title="{{item.menuName}}" lay-skin="primary" value="{{item.menuId}}" disabled checked>
-        {{#  } else { }}
-        <input class="parent" lay-filter='other' type="checkbox" name="MenuIds" title="{{item.menuName}}" lay-skin="primary" value="{{item.menuId}}" disabled>
-        {{#  }  }}
-        <div class="setChildRole">
-            {{#  layui.each(item.mActionlList, function(index, item1){ }}
-            {{#  if(item1.isSelect){ }}
-            <input type="checkbox" class='child' lay-filter='other' name="operations" title="{{item1.mActionName}}" lay-skin="primary" value="{{item1.mActionId}}" disabled checked>
-            {{#  } else { }}
-            <input type="checkbox" class='child' lay-filter='other' name="operations" title="{{item1.mActionName}}" lay-skin="primary" value="{{item1.mActionId}}" disabled>
-            {{#  }  }}
-            {{#  }); }}
-
-        </div>
-    </div>
-    {{#  }); }}
-
-</script>
 
 
 @section Scripts
     {
     <script>
-        var layer = layui.layer
-            , form = layui.form
-            , tree = layui.tree;
-        var laytpl = layui.laytpl;
-        var roleId = '@roleId';
-        var hrefRoleId = '@hrefRoleId';
-        var data = [];
         $(function () {
-            if (hrefRoleId == '') {
-                $(".roleItem").first().click();//默认选中角色
-            }
-            else
-            {
-                $(".roleItem[data-roleid=" + hrefRoleId + "]").click();//拿到id定位选中角色
-            }
-            $("#deteleBtn").click(function () {
 
-                $.Delete("/role/RoleRemove", { roleId: $("#roleId").val() }, function () {
-                    location.href = "/role/index";
-                    p.layer.closeAll('loading');
+            var deletePost = function (id) {
+                $.Delete("/Role/Delete", { id: id }, function () {
+                    $("#btn-submit").click();
                 });
-            })
+            }
 
-            $("#CreatRole").click(function () {
-                $.openLayer("创建角色", "/role/Add", function () {
-                    location.reload();
-                }, 400, 280)
-            });
-            $("#RoleSave").click(function () {  //点击保存
-                var checkedData = tree.getChecked('demotreeId'); //获取选中节点的数据
-                $("#ShowCheckDataAjax").val(JSON.stringify(checkedData));
-                var roleName = $("#roleName").val()
-                if (!roleName) {
-                    layer.msg("角色名不为空", {
-                        icon: 2
-                        , time: 2000
-                    });
-                    return;
-                }
-                trigger();
-                ajaxSubmit('#roleRole');
+            var edit = function (id) {
+                $.openLayer("编辑角色", "/Role/Edit?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 480, 380);
+            }
 
+            table.on('tool(Role-table)',
+                function (obj) {
 
-            });
+                    var id = obj.data.id;
 
-        })
-            ; !function () {
-                $(".editBtn").click(function () {  //点击编辑
-                    $(this).removeClass("show")
-                    $(".editName").addClass("show")
-                    clearDisabled();
+                    if (obj.event === 'edit') {
+                        edit(id);
+                    }
+                    else if (obj.event === 'del') {
+                        deletePost(id);
+                    }
                 });
 
-                $(".roleItem").click(function () { //点击角色列表
-                    var roleid = $(this).data('roleid');//拿到选中的角色id
-                    $(".roleItem").removeClass("active")
-                    $(this).addClass("active")
-                    $(".choise").html($(this).html())
-                    $(".editRoleName").html($(this).html())
-                    $("#roleName").val($(this).html()) //给角色赋值
-                    trigger();
-                    IntData(roleid, Toselect);
-
-                })
-                //判断菜单的全选
-                function Toselect() {
-                    $("#role input[type=checkbox]").each(function (index, ele) {
-                        var size = $(ele).parent().find(".child").length
-                        var check = $(ele).parent().find(".child:checked").length
-                        if ($(ele).hasClass("parent") != true) {
-                            if (size == check) {
-                                $(ele).closest(".setDepartmentRole").find(".parent").prop("checked", true);
-                            } else {
-                                $(ele).closest(".setDepartmentRole").find(".parent").prop("checked", false);
-                            }
-
-                        } 
-                        size = $(ele).parent().find(".child").length
-                        check = $(ele).parent().find(".child:checked").length
-                        var total = $(".child").length
-                        var checkChild = $(".child:checked").length
-                        var checkParent = $(".parent:checked").length
-                        var parentTotal = $(".parent").length
-                        if (total == 0) {
-                            if (checkParent == parentTotal) {
-                                $(".allCheck").prop("checked", true)
-                            } else {
-                                $(".allCheck").prop("checked", false)
-                            }
-                        } else {
-                            if (total == checkChild && parentTotal == checkParent) {
-                                $(".allCheck").prop("checked", true)
-                            } else {
-                                $(".allCheck").prop("checked", false)
-                            }
-                        }
-
-
-                    })
-                    form.render('checkbox');
-
-                }
-               //IntData(roleId, Toselect);
-
-            }();
-
-
-
-
-        function IntData(roleId,func) {  //初始化数据
-
-            $.ajax({
-                type: "post",
-                url: "/role/GetRoleJurisdicData",
-                data: { roleId: roleId},
-                async: true,
-                success: function (AjaxData) {
-                    $("#roleId").val(roleId);
-                    var list = AjaxData.list;
-                    showCheck(AjaxData.roleDataAccess);
-                    var getTpl = demo.innerHTML;
-                    var view = document.getElementById('setRoleView');
-                    laytpl(getTpl).render(list, function (html) {
-                        view.innerHTML = html;
-                    });
-                    func();
-                }
+            $('#Role .layui-btn').on("click", function () {
+                $.openLayer("添加角色", "/Role/Add", function () {
+                    $("#btn-submit").click();
+                }, 480, 380);
             });
-        }
-
-        function setDisabled() {
-            $("#formState input[type=checkbox]").prop("disabled", true)
-            form.render('checkbox');
-        }
-        function clearDisabled() {
-            $("#formState input[type=checkbox]").prop("disabled", false)
-            form.render('checkbox');
-        }
-
-        function showCheck(data) //现在layui tree 数据
-        {
-            tree.render({
-                accordion: true,
-                elem: '#test1', //绑定元素
-                id:"demotreeId"
-                , showCheckbox: true
-                , data: data
-
-            });
-            setDisabled()
-            form.on('checkbox(all)', function (data) {
-                var check = data.elem.checked
-                $("#role input[type=checkbox]").each(function () {
-                    this.checked = check
-                })
-                form.render('checkbox');
-            });
-            form.on('checkbox(other)', function (data) {
-                var element = $(data.elem)
-                var size = element.parent().find(".child").length
-                var check = element.parent().find(".child:checked").length
-                var total = $(".child").length
-                var checkChild = $(".child:checked").length
-                var checkParent = $(".parent:checked").length
-                var parentTotal = $(".parent").length
-                if (element.hasClass("parent") == true) {
-                    element.parent().find(".child").prop("checked", data.elem.checked);
-                } else {
-                    if (size == check) {
-                        element.closest(".setDepartmentRole").find(".parent").prop("checked", true);
-                    } else {
-                        element.closest(".setDepartmentRole").find(".parent").prop("checked", false);
-                    }
-                    //if (total == checkchild && parenttotal == checkparent) {
-                    //    $(".allcheck").prop("checked", true)
-                    //} else {
-                    //    $(".allcheck").prop("checked", false)
-                    //}
-                }
-                size = element.parent().find(".child").length
-                check = element.parent().find(".child:checked").length
-                total = $(".child").length
-                checkChild = $(".child:checked").length
-                checkParent = $(".parent:checked").length
-                parentTotal = $(".parent").length
-                if (total == 0) {
-                    if (checkParent == parentTotal) {
-                        $(".allCheck").prop("checked", true)
-                    } else {
-                        $(".allCheck").prop("checked", false)
-                    }
-                } else {
-                    if (total == checkChild && parentTotal == checkParent) {
-                        $(".allCheck").prop("checked", true)
-                    } else {
-                        $(".allCheck").prop("checked", false)
-                    }
-                }
-                form.render('checkbox');
-            });
-        }
-
-        function trigger()
-        {
-            $(".editName").removeClass("show")
-            $(".editBtn").addClass("show")
-           // setDisabled()
-        }
-
-        function ajaxSubmit(obj)
-        {
-            Loading();
-            $(obj).ajaxSubmit({
-                success: function (r) {
-                    if (r.message) {
-                        msg = r.message;
-                    }
-                    if (r.success) {
-                        layer.msg(msg, {
-                            icon: 1
-                            , time: 1200
-                        }, function () {
-                            clostLoading();
-                            var roleid = encodeURIComponent(r.data.roleId)
-
-                            location.href = '/role/index?r=' + roleid; //roleId 编辑好定位某的角色
-
-                        });
-                    } else {
-                        layer.msg(msg, {
-                            icon: 2
-                            , time: 2000
-                        }, function () {
-
-                            clostLoading();
-                        });
-                    }
-
-                    if (window == top) {
-                        clostLoading();
-                    }
-                },
-                error: function () {
-                    layer.msg(msg, {
-                        icon: 0
-                        , time: 2000
-                    });
-                }
-            });
-        }
-
-
-        function Loading() {
-            layer.load(1, {
-                shade: [0.5, '#000'],
-                time: 1000,
-                isOutAnim: false,
-                anim: -1,
-            })
-        }
-        function clostLoading() {
-            layer.close();
-
-        }
+        });
     </script>
-
-
 }
-
-

@@ -80,33 +80,15 @@ namespace Sikiro.Web.Admin.Controllers
         [HttpPost]
         public IActionResult AddEdit(AddEditModel model)
         {
-            var departmentName = _departmentService.Get(c => c.Name == model.Name);
             var entity = model.MapTo<Department>();
-            if (model.Id.IsNullOrWhiteSpace())
-            {
 
-                if (departmentName != null)
-                {
-                    return Json(ServiceResult.IsFailed("部门名已存在"));
-                }
-                _departmentService.Add(entity);
-            }
-            else
-            {
-                if (departmentName != null)
-                {
-                    if (entity.Id != departmentName.Id)
-                    {
-                        return Json(ServiceResult.IsFailed("部门名已存在"));
-                    }
+            var result = model.Id.IsNullOrWhiteSpace()
+                ? _departmentService.Add(entity)
+                : _departmentService.Update(entity);
 
-                }
-                _departmentService.Update(entity);
-            }
-
-
-            return Json(ServiceResult.IsSuccess("操作成功"));
+            return Json(result);
         }
+
         #endregion
 
         /// <summary>
