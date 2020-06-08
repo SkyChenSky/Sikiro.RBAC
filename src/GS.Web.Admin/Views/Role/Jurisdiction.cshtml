@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Jurisdiction";
+}
+
+@model Sikiro.Web.Admin.Models.Role.AddRoleModel
+
+<layuiForm id="layuiadmin-form-admin" asp-controller="Role" asp-action="Add" style="padding: 20px">
+
+    <div id="tree"></div>
+    
+    
+    <input type="button" value="qweqwe" id="qwe" />
+</layuiForm>
+
+@section Scripts
+{
+    <script>
+        var tree = layui.tree;
+
+        $.post("/role/JurisdictionTree", {id:'@ViewBag.Id'}, function(data) {
+            tree.render({
+                elem: '#tree',
+                showCheckbox: true,
+                id: "jurisdiction",
+                data: [
+                    {
+                        id: 'qweqwe',
+                        title: '江西',
+                        spread: true,
+                        children: [
+                            {
+                                id: 'aaaaa',
+                                title: '南昌' //二级菜单
+                                ,
+                                children: [
+                                    {
+                                        title: '高新区' //三级菜单
+                                        //…… //以此类推，可无限层级
+                                    }
+                                ]
+                            }
+                        ]
+                    }, {
+                        id: 'aaaaa',
+                        title: '陕西',
+                        spread: true,
+                        children: [
+                            {
+                                id: 'aaaaa11',
+                                title: '西安' //二级菜单
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+
+
+        $("#qwe").click(function() {
+            var checkData = tree.getChecked("jurisdiction");
+
+            debugger;
+        });
+    </script>
+}

@@ -20,14 +20,15 @@
 
         <div class="layui-card-body" id="Role">
             <div style="padding-bottom: 10px;">
-                <LayuiButton class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Role_Add.GetHashCode()">添加</LayuiButton>
+                <LayuiButton id="btn-add" class="layui-btn layuiadmin-btn-admin" data-type="add" PermCode="@PermCode.Role_Add.GetHashCode()">添加</LayuiButton>
             </div>
 
-            <layuiTable id="Role-table" lay-filter="Role-table" toolbar="admin-toolBar" colsModel="typeof(RoleVo)" asp-action="List" asp-controller="Role" PermCode="@PermCode.Role_List.GetHashCode()" />
+            <layuiTable id="Role-table" lay-filter="Role-table" toolbar="admin-toolBar" toolbarweight="230" colsModel="typeof(RoleVo)" asp-action="List" asp-controller="Role" PermCode="@PermCode.Role_List.GetHashCode()" />
 
             <script type="text/html" id="admin-toolBar">
                 <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="edit" PermCode="@PermCode.Role_Edit.GetHashCode()">编辑</LayuiButton>
                 <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Role_Delete.GetHashCode()">删除</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="jurisdiction" PermCode="@PermCode.Role_Jurisdiction.GetHashCode()">权限设置</LayuiButton>
             </script>
         </div>
     </div>
@@ -39,7 +40,7 @@
     <script>
         $(function () {
 
-            var deletePost = function (id) {
+            var del = function (id) {
                 $.Delete("/Role/Delete", { id: id }, function () {
                     $("#btn-submit").click();
                 });
@@ -51,6 +52,12 @@
                 }, 480, 380);
             }
 
+            var jurisdiction = function (id) {
+                $.openLayer("权限设置", "/Role/jurisdiction?id=" + id, function () {
+                    $("#btn-submit").click();
+                }, 480, 680);
+            }
+
             table.on('tool(Role-table)',
                 function (obj) {
 
@@ -60,11 +67,14 @@
                         edit(id);
                     }
                     else if (obj.event === 'del') {
-                        deletePost(id);
+                        del (id);
+                    }
+                    else if (obj.event === 'jurisdiction') {
+                        jurisdiction(id);
                     }
                 });
 
-            $('#Role .layui-btn').on("click", function () {
+            $('#Role #btn-add').on("click", function () {
                 $.openLayer("添加角色", "/Role/Add", function () {
                     $("#btn-submit").click();
                 }, 480, 380);

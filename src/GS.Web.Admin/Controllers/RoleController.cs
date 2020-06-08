@@ -126,23 +126,32 @@ namespace Sikiro.Web.Admin.Controllers
         /// <summary>
         /// 角色权限页
         /// </summary>
-        /// <param name="roleId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpPost]
-        public IActionResult Jurisdiction(string roleId)
+        public IActionResult Jurisdiction(string id)
         {
+            ViewBag.Id = id;
             return View();
         }
-
 
         /// <summary>
         /// 设置角色权限
         /// </summary>
-        /// <param name="roleId"></param>
         /// <returns></returns>
         [HttpPost]
         [Permission(PermCode.Role_Jurisdiction)]
-        public IActionResult Jurisdiction()
+        public IActionResult Jurisdiction(List<JurisdictionModel> model)
+        {
+            return Json(new { });
+        }
+
+        /// <summary>
+        /// 权限树
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Permission(PermCode.Role_Jurisdiction)]
+        public IActionResult JurisdictionTree(string id)
         {
             return Json(new { });
         }
