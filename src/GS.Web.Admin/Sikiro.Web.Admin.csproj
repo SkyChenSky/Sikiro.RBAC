@@ -27,7 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\GS.Common.Utils\Sikiro.Common.Utils.csproj" />
     <ProjectReference Include="..\GS.Entity.System\Sikiro.Entity.System.csproj" />
-    <ProjectReference Include="..\GS.Service.Admin\Sikiro.Service.Admin.csproj" />
     <ProjectReference Include="..\GS.Service.System\Sikiro.Service.System.csproj" />
     <ProjectReference Include="..\Sikiro.Tookits\Sikiro.Tookits.csproj" />
   </ItemGroup>

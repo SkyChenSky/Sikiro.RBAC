@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Sikiro.Nosql.Mongo;
-using Sikiro.Repository.Admin;
 using Sikiro.Web.Admin.Attribute;
 using Sikiro.Web.Admin.Extention;
 using Sikiro.Web.Admin.Permission;
@@ -56,7 +55,6 @@ namespace Sikiro.Web.Admin
                     options.DataProtectionProvider = DataProtectionProvider.Create(new DirectoryInfo(Directory.GetCurrentDirectory()));
                 });
             services.AddScoped<GlobalAuthorizeAttribute>();
-            services.AddScoped<MongoRep>();
             services.AddHttpContextAccessor();
 
             //基础框架注入
