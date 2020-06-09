@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="log4net\**" />
+    <Content Remove="log4net\**" />
+    <EmbeddedResource Remove="log4net\**" />
+    <None Remove="log4net\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Extention\ExceptionExtension.cs" />
   </ItemGroup>
 

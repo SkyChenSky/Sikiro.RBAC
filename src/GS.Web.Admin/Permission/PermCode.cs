@@ -30,7 +30,7 @@ namespace Sikiro.Web.Admin.Permission
         [Display(Name = "岗位管理添加")]
         Position_Add = 10010,
         [Display(Name = "岗位管理编辑")]
-        Position_Edit = 10016,
+        Position_Edit = 10008,
         [Display(Name = "岗位管理删除")]
         Position_Dete = 10011,
         #endregion

@@ -66,7 +66,7 @@ namespace Sikiro.Web.Admin
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
-            lifetime.ApplicationStarted.Register(() => OnStarted(app));
+            OnStarted(app);
 
             if (env.IsDevelopment())
             {
