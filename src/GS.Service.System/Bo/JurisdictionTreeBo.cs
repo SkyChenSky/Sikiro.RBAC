@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Sikiro.Web.Admin.Models.Role
+namespace Sikiro.Service.System.Bo
 {
-    public class JurisdictionVo
+    public class JurisdictionTreeBo
     {
         public string Id { get; set; }
 
@@ -10,9 +10,7 @@ namespace Sikiro.Web.Admin.Models.Role
 
         public string Field { get; set; }
 
-        public List<JurisdictionVo> Children { get; set; }
-
-        public bool Spread => true;
+        public IEnumerable<JurisdictionTreeBo> Children { get; set; }
 
         public bool Checked { get; set; }
     }

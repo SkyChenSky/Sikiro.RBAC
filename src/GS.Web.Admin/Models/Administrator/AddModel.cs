@@ -67,9 +67,5 @@ namespace Sikiro.Web.Admin.Models.Administrator
         [Display(Name = "密码")]
         [Required]
         public string Password { get; set; }
-
-        [Display(Name = "企业")]
-        [Required]
-        public string CompanyId { get; set; }
     }
 }

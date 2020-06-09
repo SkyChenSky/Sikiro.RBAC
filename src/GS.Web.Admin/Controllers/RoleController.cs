@@ -140,9 +140,40 @@ namespace Sikiro.Web.Admin.Controllers
         /// <returns></returns>
         [HttpPost]
         [Permission(PermCode.Role_Jurisdiction)]
-        public IActionResult Jurisdiction(List<JurisdictionModel> model)
+        public IActionResult Jurisdiction(string id,List<JurisdictionModel> model)
         {
-            return Json(new { });
+            var resultList = new List<JurisdictionModel>();
+            FormatJurisdictionTree(resultList, model);
+
+            var menuActionIds = resultList.Where(a => a.Field == "action").Select(a => a.Id.ToObjectId()).ToArray();
+            var menuIds = resultList.Where(a => a.Field == "menu").Select(a => a.Id.ToObjectId()).ToArray();
+
+            var result =_roleService.SetMenuAndMenuAction(id, menuActionIds, menuIds);
+
+            return Json(result);
+        }
+
+        /// <summary>
+        /// 嵌套转一维
+        /// </summary>
+        /// <param name="newList"></param>
+        /// <param name="oldList"></param>
+        private void FormatJurisdictionTree(List<JurisdictionModel> newList, List<JurisdictionModel> oldList)
+        {
+            oldList.ForEach(a =>
+            {
+                newList.Add(new JurisdictionModel
+                {
+                    Title = a.Title,
+                    Field = a.Field,
+                    Id = a.Id
+                });
+
+                if (a.Children != null && a.Children.Any())
+                {
+                    FormatJurisdictionTree(newList, a.Children);
+                }
+            });
         }
 
         /// <summary>
@@ -153,7 +184,12 @@ namespace Sikiro.Web.Admin.Controllers
         [Permission(PermCode.Role_Jurisdiction)]
         public IActionResult JurisdictionTree(string id)
         {
-            return Json(new { });
+            var haveCheckedMenuActionIds = _roleService.GetMenuActionIds(id);
+            var allMenuActionList = _roleService.GetAllMenuAction();
+
+            var treeList =  _menuService.GetTreeList(haveCheckedMenuActionIds, allMenuActionList).MapTo<List<JurisdictionVo>>();
+
+            return Json(treeList);
         }
 
         #endregion

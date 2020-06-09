@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using MongoDB.Bson;
 using Sikiro.Entity.System;
@@ -20,14 +18,17 @@ namespace Sikiro.Service.System
     public class MenuService : IDepend
     {
         private readonly MongoRepository _mongoRepository;
-        private List<Menu> newList = new List<Menu>();
-        private List<ObjectId> DataIds = new List<ObjectId>();
 
         public MenuService(MongoRepository mongoRepository)
         {
             _mongoRepository = mongoRepository;
         }
 
+        /// <summary>
+        /// 添加菜单
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public ServiceResult Add(Menu model)
         {
             model.Url = model.Url?.ToLower();
@@ -35,18 +36,31 @@ namespace Sikiro.Service.System
             return ServiceResult.IsSuccess(AccountConstString.OperateSuccess);
         }
 
+        /// <summary>
+        /// 更新菜单
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public ServiceResult Update(Menu model)
         {
             model.Url = model.Url?.ToLower();
-            _mongoRepository.Update(model);
+            _mongoRepository.Update<Menu>(a=>a.Id == model.Id,a=>new Menu
+            {
+                Icon = model.Icon,
+                Name = model.Name,
+                Order = model.Order,
+                ParentId = model.ParentId,
+                Url = model.Url
+            });
             return ServiceResult.IsSuccess(AccountConstString.OperateSuccess);
         }
 
-        public Menu Get(Expression<Func<Menu, bool>> expression)
-        {
-            return _mongoRepository.Get(expression);
-        }
-
+        /// <summary>
+        /// 是否已存在名称
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public ServiceResult IsNameExists(string id, string name)
         {
             var isExists = _mongoRepository.Exists<Menu>(a => a.Id != id.ToObjectId() && a.Name == name);
@@ -141,22 +155,6 @@ namespace Sikiro.Service.System
         }
 
         /// <summary>
-        /// 递归操作
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public List<ObjectId> GetObjIdList(List<ShowCheck> list)
-        {
-
-            foreach (var item in list)
-            {
-                DataIds.Add(item.Id.ToObjectId());
-                GetObjIdList(item.children);
-            }
-            return DataIds;
-        }
-
-        /// <summary>
         /// 获取全部列表
         /// </summary>
         /// <param name="userId"></param>
@@ -176,6 +174,29 @@ namespace Sikiro.Service.System
             return RecursionChatReplyList(list, null);
         }
 
+        /// <summary>
+        /// 递归操作
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="parentId"></param>
+        /// <returns></returns>
+        private static IEnumerable<MenuBo> RecursionChatReplyList(IEnumerable<Menu> list, ObjectId? parentId)
+        {
+            return list.Where(a => a.ParentId == parentId).Select(a => new MenuBo
+            {
+                Icon = a.Icon,
+                Name = a.Name,
+                Url = a.Url,
+                Children = RecursionChatReplyList(list, a.Id)
+            });
+        }
+
+        /// <summary>
+        /// 获取普通管理员菜单
+        /// </summary>
+        /// <param name="menuList"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
         private IEnumerable<Menu> GetAdminMenu(List<Menu> menuList, ObjectId[] roleIds)
         {
             var menuIdsInRole = _mongoRepository.ToList<Role>(a => roleIds.Contains(a.Id)).SelectMany(a => a.MenuId);
@@ -183,6 +204,13 @@ namespace Sikiro.Service.System
             return RecursionMenuListOfParentId(menuList, null, menuIdsInRole).OrderByDescending(b => b.Order);
         }
 
+        /// <summary>
+        /// 递归
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="id"></param>
+        /// <param name="menuIds"></param>
+        /// <returns></returns>
         private IEnumerable<Menu> RecursionMenuListOfParentId(IEnumerable<Menu> list, ObjectId? id,
             IEnumerable<ObjectId> menuIds = null)
         {
@@ -203,44 +231,46 @@ namespace Sikiro.Service.System
             return newList;
         }
 
-        /// <summary>
-        /// 递归操作
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="parentId"></param>
-        /// <returns></returns>
-        private static IEnumerable<MenuBo> RecursionChatReplyList(IEnumerable<Menu> list, ObjectId? parentId)
-        {
-            return list.Where(a => a.ParentId == parentId).Select(a => new MenuBo
-            {
-                Icon = a.Icon,
-                Name = a.Name,
-                Url = a.Url,
-                Children = RecursionChatReplyList(list, a.Id)
-            });
-        }
-
         public IEnumerable<string> GetAllMenuUrl()
         {
             return _mongoRepository.ToList<Menu, string>(a => a.Url != null, a => a.Url.ToLower().Trim('/'));
         }
+
+        /// <summary>
+        /// 获取权限数
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<JurisdictionTreeBo> GetTreeList(ObjectId[] haveCheckedMenuActionIds, List<MenuAction> allMenuAction)
+        {
+            var list = _mongoRepository.ToList<Menu>(a => true, a => a.Desc(b => b.Order), null);
+
+            return RecursionTreeList(list, null, allMenuAction, haveCheckedMenuActionIds);
+        }
+
+        private IEnumerable<JurisdictionTreeBo> RecursionTreeList(IEnumerable<Menu> list, ObjectId? id, List<MenuAction> allMenuAction, ObjectId[] haveCheckedMenuActionIds)
+        {
+            var tree = list.Where(a=>a.ParentId == id).Select(a => new JurisdictionTreeBo
+            {
+                Id = a.Id.ToString(),
+                Field = "menu",
+                Title = a.Name,
+                Children = RecursionTreeList(list,a.Id, allMenuAction, haveCheckedMenuActionIds)
+            });
+
+            if (tree.Count() == 0)
+            {
+                var haveRelateMenuAction =  list.Where(a => a.Id == id).SelectMany(a => a.MenuActionIds);
+                var menuActionTree = allMenuAction.Where(a => haveRelateMenuAction.Contains(a.Id)).Select(a=>new JurisdictionTreeBo
+                {
+                    Id= a.Id.ToString(),
+                    Field = "action",
+                    Title = a.Name,
+                    Checked = haveCheckedMenuActionIds.Contains(a.Id)
+                });
+                tree= tree.Concat(menuActionTree);
+            }
+
+            return tree;
+        }
     }
-
-    /// <summary>
-    ///显示layuitreeCheck的格式
-    /// </summary>
-    public class ShowCheck
-    {
-        public string Title { get; set; }
-        public string Id { get; set; }
-
-        public bool Checked { get; set; }
-
-        public bool Spread { get; set; }
-
-        public bool Disabled { get; set; }
-
-        public List<ShowCheck> children { get; set; }
-    }
-
 }

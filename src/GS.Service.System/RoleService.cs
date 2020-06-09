@@ -77,6 +77,27 @@ namespace Sikiro.Service.System
         }
 
         /// <summary>
+        /// 设置
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="menuActionIds"></param>
+        /// <param name="menuIds"></param>
+        /// <returns></returns>
+        public ServiceResult SetMenuAndMenuAction(string roleId, ObjectId[] menuActionIds, ObjectId[] menuIds)
+        {
+            var roleIdObject = roleId.ToObjectId();
+            var result = _mongoRepository.Update<Role>(a => a.Id == roleIdObject, a => new Role
+            {
+                MenuActionIds = menuActionIds,
+                MenuId = menuIds
+            }) > 0;
+
+            return result
+                ? ServiceResult.IsSuccess(AccountConstString.OperateSuccess)
+                : ServiceResult.IsFailed(AccountConstString.OperateFailed);
+        }
+
+        /// <summary>
         /// 编辑角色
         /// </summary>
         /// <param name="entity"></param>
@@ -96,18 +117,6 @@ namespace Sikiro.Service.System
                 _mongoRepository.Update(entity)
                     ? ServiceResult.IsSuccess(AccountConstString.OperateSuccess)
                     : ServiceResult.IsFailed(AccountConstString.OperateFailed);
-        }
-
-
-        public ServiceResult Update(string id, Expression<Func<Role, Role>> updateExpression)
-        {
-            _mongoRepository.Update<Role>(c => c.Id == id.ToObjectId(), updateExpression);
-            return ServiceResult.IsSuccess("操作成功");
-        }
-
-        public Role Get(Expression<Func<Role, bool>> updateExpression)
-        {
-            return _mongoRepository.Get(updateExpression);
         }
 
         /// <summary>
@@ -134,6 +143,23 @@ namespace Sikiro.Service.System
             return _mongoRepository.Delete<Role>(a => a.Id == roleIdObject) > 0
                 ? ServiceResult.IsSuccess(AccountConstString.OperateSuccess)
                 : ServiceResult.IsFailed(AccountConstString.OperateFailed);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public ObjectId[] GetMenuActionIds(string roleId)
+        {
+            var roleIdObject = roleId.ToObjectId();
+            var role =  _mongoRepository.Get<Role>(a => a.Id == roleIdObject);
+            return role?.MenuActionIds;
+        }
+
+        public List<MenuAction> GetAllMenuAction()
+        {
+           return  _mongoRepository.ToList<MenuAction>(a => true);
         }
     }
 }
