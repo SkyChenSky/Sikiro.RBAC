@@ -2,6 +2,6 @@
 {
     public class DbConfig
     {
-        public const string Name = "rbac";
+        public const string Name = "System";
     }
 }

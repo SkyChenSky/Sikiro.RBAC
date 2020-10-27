@@ -31,8 +31,8 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
     "Password" : "8FC2C60F38E7159FF01A183D41C9BF8C", 
     "Status" : NumberInt(1), 
     "IsSuper" : true, 
-    "CreateDateTime" : ISODate("2020-06-06T04:05:33.540+0000"), 
-    "UpdateDateTime" : ISODate("2020-06-09T05:04:06.568+0000")
+    "CreateDateTime" : ISODate("2020-06-06"), 
+    "UpdateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edf1d10c215e61e0870b2dc"), 
@@ -49,8 +49,8 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
     "Password" : "E47B0E927E1E7CA5460250ABD717836E", 
     "Status" : NumberInt(1), 
     "IsSuper" : false, 
-    "CreateDateTime" : ISODate("2020-06-09T05:24:32.267+0000"), 
-    "UpdateDateTime" : ISODate("2020-06-12T06:50:32.082+0000")
+    "CreateDateTime" : ISODate("2020-06-06"), 
+    "UpdateDateTime" : ISODate("2020-06-06")
 }
 
 ```
@@ -67,7 +67,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
     "MenuActionIds" : [
 
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edb649986f170631806a129"), 
@@ -85,7 +85,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
         ObjectId("d89f3a35931c386956c1a402"), 
         ObjectId("f5dffc111454b227fbcdf361")
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edb64d586f170631806a12a"), 
@@ -100,7 +100,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
         ObjectId("c63a5650dcd0bf04b35bd712"), 
         ObjectId("d2cb583f4b5bdc51b965ae55")
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edde8513baed45e741c70d3"), 
@@ -114,7 +114,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
         ObjectId("c1722a7941d61aad6e651a35"), 
         ObjectId("f702defbc67edb455949f46b")
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edded093baed45e741c70d4"), 
@@ -129,7 +129,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
         ObjectId("a17479231dc298309a3fda7d"), 
         ObjectId("a2369958a9645eac52b58a81")
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 { 
     "_id" : ObjectId("5edded433baed45e741c70d5"), 
@@ -144,7 +144,7 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
         ObjectId("7b9d31aa17b849b238ab79ce"), 
         ObjectId("d3ab9b41f98222ad7b5ff8a8")
     ], 
-    "CreateDateTime" : ISODate("0001-01-01T00:00:00.000+0000")
+    "CreateDateTime" : ISODate("2020-06-06")
 }
 
 ```

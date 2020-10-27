@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.705
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sikiro.Web.Admin", "src\GS.Web.Admin\Sikiro.Web.Admin.csproj", "{C7C94DAD-53EE-457A-B8D1-B303985471A9}"
 EndProject
@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0.Tookits", "0.Tookits", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.Entity", "1.Entity", "{4E703F2B-5ACF-47D2-A158-7890AA5E0AF8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.DAL", "3.DAL", "{A4C441AB-36A4-4446-8DFC-D2F00EF573A3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.BAL", "3.BAL", "{A4C441AB-36A4-4446-8DFC-D2F00EF573A3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.UI", "4.UI", "{1223190E-458E-4B1E-B37F-F2E394B0F623}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.Web", "4.Web", "{1223190E-458E-4B1E-B37F-F2E394B0F623}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sikiro.Tookits", "src\Sikiro.Tookits\Sikiro.Tookits.csproj", "{DBD94BA0-0F19-4B5A-B2A7-C2AE98FC2051}"
 EndProject
