@@ -14,6 +14,9 @@ Download Studio 3T or other mongo view client.And Then Copy Bson Script and Excu
 
 # Init Data
 
+## DataBase
+System
+
 ## Administrator
 ```json
 { 
