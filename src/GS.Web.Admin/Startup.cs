@@ -29,15 +29,17 @@ namespace Sikiro.Web.Admin
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews(options =>
+            services.AddMvc(options =>
             {
                 options.Filters.Add(new GolbalExceptionAttribute());
                 options.Filters.Add(new GobalModelValidAttribute());
                 options.Filters.Add<GlobalAuthorizeAttribute>();
                 options.Filters.Add<GobalPermCodeAttribute>();
                 options.ModelBinderProviders.Insert(0, new TrimModelBinderProvider());
+            }).AddMvcOptions(options =>
+            {
+                options.EnableEndpointRouting = false;
             });
-            services.AddRazorPages();
 
             //cookies身份认证
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -76,13 +78,13 @@ namespace Sikiro.Web.Admin
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+            app.UseMvc(routes =>
             {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Account}/{action=Logon}/{id?}");
             });
         }
 
