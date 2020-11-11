@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "首页";
-    var dateName = (string)ViewBag.dateName;
     var userName = (string)ViewBag.UserName;
 }
 @section Head{
@@ -63,7 +62,9 @@
                     <div class="main_user_card">
                         <img src="/img/userlogo.jpg" class="layui-circle">
                         <div class="main_user_other">
-                            <div class="name">@(dateName)，@(userName)，祝你开心每一天！</div>
+                            <div class="name">@(userName)，祝你开心每一天！</div>
+                            <div class="name">当前系统运行版本：@ViewBag.FrameworkVersion</div>
+                            
                         </div>
                     </div>
                 </div>

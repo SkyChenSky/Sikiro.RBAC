@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyModel;
 using Sikiro.Service.System;
 
 namespace Sikiro.Web.Admin.Controllers
@@ -28,6 +29,8 @@ namespace Sikiro.Web.Admin.Controllers
         public IActionResult IndexPage()
         {
             ViewBag.UserName = CurrentUserData.RealName;
+            ViewBag.FrameworkVersion = DependencyContext.Default.Target.Framework;
+
             return View();
         }
 
