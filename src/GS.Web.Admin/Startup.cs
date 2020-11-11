@@ -78,6 +78,7 @@ namespace Sikiro.Web.Admin
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseMvc(routes =>
