@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Sikiro.Common.Utils;
 using Sikiro.Tookits.Extension;
@@ -72,7 +71,7 @@ namespace Sikiro.Web.Admin.Tags
             if (!DefaultText.IsNullOrWhiteSpace())
                 selectListItems.Insert(0, new SelectListItem { Text = DefaultText, Value = "" });
 
-            var idStr = NameAndIdProvider.CreateSanitizedId(ViewContext, For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId( For.Name, _generator.IdAttributeDotReplacement);
             var attributes = new Dictionary<string, object>
             {
                 {"lay-search", ""},

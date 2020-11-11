@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Sikiro.Common.Utils;
 using Sikiro.Tookits.Extension;
@@ -62,7 +61,7 @@ namespace Sikiro.Web.Admin.Tags
             if (kvList == null && Data != null)
                 selectListItems = (List<SelectListItem>)Data;
 
-            var idStr = NameAndIdProvider.CreateSanitizedId(ViewContext, For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId( For.Name, _generator.IdAttributeDotReplacement);
 
             var tagBuilder = new StringBuilder(32);
             selectListItems.ForEach(item =>

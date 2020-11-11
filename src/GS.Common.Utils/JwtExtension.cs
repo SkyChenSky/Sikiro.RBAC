@@ -25,7 +25,7 @@ namespace Sikiro.Common.Utils
 
                 jwt.AddClaim("expire", DateTime.Now.AddMinutes(minutes));
 
-                var token = jwt.Build();
+                var token = jwt.Encode();
                 return token;
             }
             catch

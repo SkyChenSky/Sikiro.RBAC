@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Sikiro.Common.Utils;
 using Sikiro.Tookits.Extension;
@@ -73,6 +72,7 @@ namespace Sikiro.Web.Admin.Tags
             {
                 value = ((DateTime)value).ToString(DateTimeType.GetDisplayName());
             }
+
             var inputTagBuilder = _generator.GenerateTextBox(ViewContext,
                 modelExplorer,
                 For.Name,
@@ -86,7 +86,7 @@ namespace Sikiro.Web.Admin.Tags
             output.Attributes.Add("class", InputDisplay.GetDisplayName());
 
             var dateTimeTypeStr = DateTimeType.ToString();
-            var idStr = NameAndIdProvider.CreateSanitizedId(ViewContext, For.Name,
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
                 _generator.IdAttributeDotReplacement);
             output.PostElement.SetHtmlContent($@"<script type='text/javascript'>
              layui.use('laydate',

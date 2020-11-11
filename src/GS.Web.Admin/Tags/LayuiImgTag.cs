@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Sikiro.Tookits.Extension;
 
@@ -81,7 +80,7 @@ namespace Sikiro.Web.Admin.Tags
                 <div>请上传100px*100px的图片</div>
                     </div>";
 
-            var idStr = NameAndIdProvider.CreateSanitizedId(ViewContext, For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name, _generator.IdAttributeDotReplacement);
 
             output.TagName = "div";
             output.TagMode = TagMode.StartTagAndEndTag;

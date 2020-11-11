@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Sikiro.Nosql.Mongo;
 using Sikiro.Web.Admin.Attribute;
@@ -28,19 +29,15 @@ namespace Sikiro.Web.Admin
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
+            services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new GolbalExceptionAttribute());
                 options.Filters.Add(new GobalModelValidAttribute());
                 options.Filters.Add<GlobalAuthorizeAttribute>();
                 options.Filters.Add<GobalPermCodeAttribute>();
-                options.ModelBinderProviders.Insert(0, new TrimModelBinderProvider());//去除空格
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                    options.SerializerSettings.Formatting = Formatting.Indented;
-                }
-            );
+                options.ModelBinderProviders.Insert(0, new TrimModelBinderProvider());
+            });
+            services.AddRazorPages();
 
             //cookies身份认证
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -62,7 +59,7 @@ namespace Sikiro.Web.Admin
             services.AddService();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             OnStarted(app);
 
@@ -77,13 +74,15 @@ namespace Sikiro.Web.Admin
 
             app.UseStaticFiles();
 
+            app.UseRouting();
+
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Account}/{action=Logon}/{id?}");
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
 
