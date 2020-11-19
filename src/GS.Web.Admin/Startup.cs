@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using Sikiro.Nosql.Mongo;
+using Sikiro.Tookits.Mvc;
 using Sikiro.Web.Admin.Attribute;
 using Sikiro.Web.Admin.Extention;
 using Sikiro.Web.Admin.Permission;
@@ -29,13 +28,18 @@ namespace Sikiro.Web.Admin
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
+            services.AddControllersWithViews(options =>
             {
                 options.Filters.Add(new GolbalExceptionAttribute());
                 options.Filters.Add(new GobalModelValidAttribute());
                 options.Filters.Add<GlobalAuthorizeAttribute>();
                 options.Filters.Add<GobalPermCodeAttribute>();
                 options.ModelBinderProviders.Insert(0, new TrimModelBinderProvider());
+            }).AddJsonOptions(option =>
+            {
+                option.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                option.JsonSerializerOptions.Converters.Add(new DateTimeNullableConverter());
+
             }).AddMvcOptions(options =>
             {
                 options.EnableEndpointRouting = false;
