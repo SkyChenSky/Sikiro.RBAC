@@ -32,7 +32,7 @@ namespace Sikiro.Web.Admin.Permission
         [Display(Name = "岗位管理编辑")]
         Position_Edit = 10008,
         [Display(Name = "岗位管理删除")]
-        Position_Dete = 10011,
+        Position_Delete = 10011,
         #endregion
 
         #region 角色管理
@@ -66,86 +66,6 @@ namespace Sikiro.Web.Admin.Permission
         Menu_Relate = 10032,
         [Display(Name = "菜单管理删除")]
         Menu_Delete = 10033,
-        #endregion
-
-        #region 前台系统以2开头
-        [Display(Name = "企业列表")]
-        Company_list = 20001,
-        [Display(Name = "企业添加和编辑")]
-        Company_AddorEdit = 20002,
-        [Display(Name = "企业删除")]
-        Company_Dele = 20003,
-        [Display(Name = "微商城列表")]
-        Shopping_list = 20004,
-        [Display(Name = "微商城添加")]
-        Shopping_Add = 20005,
-        [Display(Name = "微商城编辑")]
-        Shopping_Edit = 20006,
-        [Display(Name = "微商城删除")]
-        Shopping_Dele = 20007,
-        [Display(Name = "产品列表")]
-        ProductAging_list = 20008,
-        [Display(Name = "产品添加")]
-        ProductAging_Add = 20009,
-        [Display(Name = "产品编辑")]
-        ProductAging_Edit = 20010,
-        [Display(Name = "产品删除")]
-        ProductAging_Dele = 20011,
-        [Display(Name = "自助服务列表")]
-        SelfService_list = 20012,
-        [Display(Name = "自助服务添加")]
-        SelfService_Add = 20013,
-        [Display(Name = "自助服务编辑")]
-        SelfService_Edit = 20014,
-        [Display(Name = "自助服务删除")]
-        SelfService_Dele = 20015,
-        [Display(Name = "用户反馈列表")]
-        FeedBack_list = 20016,
-        [Display(Name = "用户反馈编辑")]
-        FeedBack_Edit = 20017,
-        [Display(Name = "用户信息列表")]
-        Info_list = 20018,
-
-
-        [Display(Name = "最近联系人列表")]
-        Relation_list = 20060,
-
-        [Display(Name = "预设回复列表")]
-        ChatReply_List = 20019,
-        [Display(Name = "添加预设类型")]
-        ChatReply_TypeAdd = 20020,
-        [Display(Name = "预设添加")]
-        ChatReply_Add = 20021,
-        [Display(Name = "预设批量删除")]
-        ChatReply_batchDele = 20022,
-        [Display(Name = "预设删除")]
-        ChatReply_Dele = 20023,
-        [Display(Name = "预设编辑")]
-        ChatReply_Edit = 20024,
-        [Display(Name = "客服表单审批列表")]
-        Form_clientList = 20025,
-        [Display(Name = "客服表单审操作")]
-        Form_clientOperation = 20026,
-
-        [Display(Name = "仓库表单审批列表")]
-        Form_warehouseList = 20027,
-        [Display(Name = "仓库表单操作")]
-        Form_warehouseOperation = 20028,
-        [Display(Name = "站内信息列表")]
-        Info_news = 20029,
-        [Display(Name = "站内信息回复")]
-        Info_Add = 20030,
-
-        [Display(Name = "用户信息的启用")]
-        Info_Open = 20031,
-        [Display(Name = "用户信息的停用")]
-        Info_Stop = 20032,
-
-        [Display(Name = "客服聊天")]
-        CustomService_List = 20040,
-
-        [Display(Name = "聊天记录列表")]
-        Chat_List = 20050
         #endregion
     }
 }

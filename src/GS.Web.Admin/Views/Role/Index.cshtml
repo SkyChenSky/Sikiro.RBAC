@@ -1,8 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Index";
 }
-
-@model PageListParams<Sikiro.Web.Admin.Models.Role.RoleParams>
+@model PageListParams<RoleParams>
 @section Head{
     <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
 }
@@ -74,7 +73,7 @@
                     }
                 });
 
-            $('#Role #btn-add').on("click", function () {
+            $('#Role .layui-btn').on("click", function () {
                 $.openLayer("添加角色", "/Role/Add", function () {
                     $("#btn-submit").click();
                 }, 480, 380);

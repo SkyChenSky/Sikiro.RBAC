@@ -19,6 +19,7 @@ namespace Sikiro.Web.Admin.Controllers
     /// </summary>
     public class PositionController : BaseController
     {
+        #region 初始化
         private readonly PositionService _positionService;
         private readonly AdministratorService _administratorService;
         public PositionController(PositionService positionService, AdministratorService administratorService)
@@ -26,14 +27,16 @@ namespace Sikiro.Web.Admin.Controllers
             _positionService = positionService;
             _administratorService = administratorService;
         }
+        #endregion
 
+        #region 列表
         public IActionResult Index()
         {
             return View();
         }
 
         [Permission(PermCode.Position_List)]
-        public IActionResult List(Models.PageListParams<PositionParams> model)
+        public IActionResult List(PageListParams<PositionParams> model)
         {
             var where = ExpressionBuilder.Init<Position>();
             var param = model.Params;
@@ -57,40 +60,31 @@ namespace Sikiro.Web.Admin.Controllers
             });
             return PageList(result);
         }
+        #endregion
 
-        public IActionResult AddorEdit(string id)
+        #region 新增编辑
+        public IActionResult AddEdit(string id)
         {
             if (string.IsNullOrEmpty(id))
-            {
                 return View();
-            }
-            else
-            {
-                var model = _positionService.Get(c => c.Id == id.ToObjectId());
-                var result = model.MapTo<AddorEditPosition>();
-                result.Id = model.Id.ToString();
-                return View(result);
-            }
+
+            var model = _positionService.Get(c => c.Id == id.ToObjectId());
+            var result = model.MapTo<AddEditPosition>();
+            result.Id = model.Id.ToString();
+            return View(result);
         }
 
         [Permission(PermCode.Position_Edit)]
         [Permission(PermCode.Position_Add)]
         [HttpPost]
-        public IActionResult AddorEditAJax(AddorEditPosition model)
+        public IActionResult AddEdit(AddEditPosition model)
         {
-            var result = new ServiceResult();
+            ServiceResult result;
             if (!string.IsNullOrEmpty(model.Id))
             {
-
                 var comModel = _positionService.Get(c => c.Name == model.Name);
-                if (comModel != null)
-                {
-                    if (comModel.Id != model.Id.ToObjectId())
-                    {
-                        return Json(ServiceResult.IsFailed("岗位名已存在"));
-                    }
-
-                }
+                if (comModel != null && comModel.Id != model.Id.ToObjectId())
+                    return Json(ServiceResult.IsFailed("岗位名已存在"));
 
                 var entity = model.MapTo<Position>();
                 entity.UpdateDateTime = DateTime.Now;
@@ -101,10 +95,7 @@ namespace Sikiro.Web.Admin.Controllers
             {
                 var isExist = _positionService.Exists(c => c.Name == model.Name);
                 if (isExist)
-                {
                     return Json(ServiceResult.IsFailed("岗位名已存在"));
-                }
-
 
                 var entity = model.MapTo<Position>();
                 entity.UpdateDateTime = DateTime.Now;
@@ -115,7 +106,9 @@ namespace Sikiro.Web.Admin.Controllers
 
             return Json(result);
         }
+        #endregion
 
+        #region 下拉框
         /// <summary>
         /// 岗位下拉框
         /// </summary>
@@ -131,11 +124,13 @@ namespace Sikiro.Web.Admin.Controllers
 
             return Json(selectList);
         }
-        [Permission(PermCode.Position_Dete)]
-        [HttpPost]
-        public IActionResult DeleAJax(string id)
-        {
+        #endregion
 
+        #region 删除
+        [Permission(PermCode.Position_Delete)]
+        [HttpPost]
+        public IActionResult Delete(string id)
+        {
             var model = _administratorService.GetByPositionId(id.ToObjectId());
             if (model != null)
             {
@@ -144,6 +139,6 @@ namespace Sikiro.Web.Admin.Controllers
             var json = _positionService.Delete(c => c.Id == id.ToObjectId());
             return Json(json);
         }
-
+        #endregion
     }
 }

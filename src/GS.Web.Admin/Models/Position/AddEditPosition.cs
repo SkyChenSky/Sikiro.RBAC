@@ -5,9 +5,11 @@ using Sikiro.Common.Utils;
 
 namespace Sikiro.Web.Admin.Models.Position
 {
-    public class AddorEditPosition
+    public class AddEditPosition
     {
-
+        /// <summary>
+        /// 主键
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
@@ -23,7 +25,7 @@ namespace Sikiro.Web.Admin.Models.Position
         /// <summary>
         /// 排序值
         /// </summary>
-         [Display(Name = "排序值")]
+        [Display(Name = "排序值")]
         [Required(ErrorMessage = "请输入排序值")]
         public int Order { get; set; }
 
@@ -31,11 +33,12 @@ namespace Sikiro.Web.Admin.Models.Position
         /// 编辑者
         /// </summary>
         public ObjectId AdministratorId { get; set; }
-        [Display(Name = "备注")]
-        [StringLength(10, ErrorMessage = "备注长度不能超过50个中文字符")]
+
         /// <summary>
         /// 备注
         /// </summary>
+        [Display(Name = "备注")]
+        [StringLength(10, ErrorMessage = "备注长度不能超过50个中文字符")]
         public string Remark { get; set; }
 
         /// <summary>

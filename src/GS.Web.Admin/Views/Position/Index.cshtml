@@ -1,8 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Index";
 }
-
-@model PageListParams<Sikiro.Web.Admin.Models.Position.PositionParams>
+@model PageListParams<PositionParams>
 @section Head{
     <link rel="stylesheet" href="~/layuiadmin/style/admin.css" media="all">
 }
@@ -13,6 +12,7 @@
             <div class="layui-form-item">
 
                 <layuiInput asp-for="Params.PositionName" text="岗位名称" placeholder="请输入" />
+
                 <layuiTableFreshButton id="btn-submit" targetFormId="Position-table" />
             </div>
         </div>
@@ -26,7 +26,7 @@
 
             <script type="text/html" id="admin-toolBar">
                 <LayuiButton class="layui-btn layui-btn-xs layui-btn-mini" lay-event="edit" PermCode="@PermCode.Position_Edit.GetHashCode()">编辑</LayuiButton>
-                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Position_Dete.GetHashCode()">删除</LayuiButton>
+                <LayuiButton class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" PermCode="@PermCode.Position_Delete.GetHashCode()">删除</LayuiButton>
             </script>
         </div>
     </div>
@@ -38,14 +38,14 @@
     <script>
             $(function () {
 
-                var deletePost = function (id) {
-                    $.Delete("/Position/DeleAJax", { id: id }, function () {
+                var del = function (id) {
+                    $.Delete("/Position/Delete", { id: id }, function () {
                         $("#btn-submit").click();
                     });
                 }
 
                 var edit = function (id) {
-                    $.openLayer("编辑商户", "/Position/AddorEdit?id=" + id, function () {
+                    $.openLayer("编辑商户", "/Position/AddEdit?id=" + id, function () {
                         $("#btn-submit").click();
                     }, 480, 380);
                 }
@@ -59,12 +59,12 @@
                             edit(data.id);
                         } 
                          else if (obj.event === 'del') {
-                            deletePost(data.id);
+                            del(data.id);
                         }
                     });
 
                 $('#Position .layui-btn').on("click", function () {
-                    $.openLayer("添加岗位", "/Position/AddorEdit", function () {
+                    $.openLayer("添加岗位", "/Position/AddEdit", function () {
                         $("#btn-submit").click();
                     }, 480, 380);
                 });
