@@ -39,7 +39,7 @@
             $(function () {
 
                 var del = function (id) {
-                    $.Delete("/Position/Delete", { id: id }, function () {
+                    $.delete("/Position/Delete", { id: id }, function () {
                         $("#btn-submit").click();
                     });
                 }

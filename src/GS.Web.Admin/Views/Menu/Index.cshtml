@@ -89,7 +89,7 @@
             renderTable();
 
             var del = function (id) {
-                $.Delete("/Menu/Delete",
+                $.delete("/Menu/Delete",
                     { id: id },
                     function () {
                         renderTable();

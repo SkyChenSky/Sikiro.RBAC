@@ -88,7 +88,7 @@
             });
 
         var del = function(id) {
-            $.Delete("/Department/Delete",
+            $.delete("/Department/Delete",
                 { id: id },
                 function() {
                     renderTable();

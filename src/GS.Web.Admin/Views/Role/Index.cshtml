@@ -40,7 +40,7 @@
         $(function () {
 
             var del = function (id) {
-                $.Delete("/Role/Delete", { id: id }, function () {
+                $.delete("/Role/Delete", { id: id }, function () {
                     $("#btn-submit").click();
                 });
             }

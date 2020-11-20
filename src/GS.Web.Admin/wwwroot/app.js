@@ -88,7 +88,7 @@ $.ajaxPost = function (url, data, successCallback, failCallback) {
     });
 };
 
-$.Delete = function (url, data, successCallback, failCallback, title) {
+$.delete = function (url, data, successCallback, failCallback, title) {
     var t = '确定删除?';
     if (title) {
         t = title;
