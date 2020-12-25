@@ -71,7 +71,8 @@ namespace Sikiro.Web.Admin.Tags
                 {"Type",Type}
             };
 
-            var idStr = TagBuilder.CreateSanitizedId(For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
+                _generator.IdAttributeDotReplacement);
 
             if (modelExplorer.Metadata.IsRequired)
                 attributes["lay-verify"] = "required";
@@ -79,6 +80,9 @@ namespace Sikiro.Web.Admin.Tags
                 attributes["Disabled"] = "Disabled";
 
             var value = modelExplorer.Model ?? Value;
+            if (modelExplorer.ModelType == typeof(int) && modelExplorer.Model == null)
+                value = 0;
+
             var inputTagBuilder = _generator.GenerateTextBox(ViewContext, For.ModelExplorer, For.Name, value, Format, attributes);
 
             var htmlText = !attributes[TextAttributeName].ToStr().IsNullOrWhiteSpace() ? $"<label class='layui-form-label'>{attributes[TextAttributeName]}</label>" : "";
@@ -92,6 +96,11 @@ namespace Sikiro.Web.Admin.Tags
             output.TagMode = TagMode.StartTagAndEndTag;
             output.Attributes.Add("id", $"{idStr}_div");
             output.Attributes.Add("class", "layui-form-item");
+
+            if (Type.ToLower() == "hidden")
+            {
+                output.Attributes.Add("hidden", "hidden");
+            }
             output.Content.SetHtmlContent(outpuHtml);
         }
     }

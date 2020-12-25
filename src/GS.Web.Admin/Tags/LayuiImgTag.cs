@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Sikiro.Tookits.Extension;
+using Sikiro.Tookits.Files;
 
 namespace Sikiro.Web.Admin.Tags
 {
@@ -44,6 +45,8 @@ namespace Sikiro.Web.Admin.Tags
         public ViewContext ViewContext { get; set; }
 
         private readonly IHtmlGenerator _generator;
+
+
         public LayuiImgTag(IHtmlGenerator generator)
         {
             _generator = generator;
@@ -68,19 +71,20 @@ namespace Sikiro.Web.Admin.Tags
                 attributes["Disabled"] = "Disabled";
 
             var value = modelExplorer.Model ?? Value;
+            var showUrl = value?.ToString();
 
             var htmlText = !attributes[TextAttributeName].ToStr().IsNullOrWhiteSpace() ? $"<label class='layui-form-label'>{attributes[TextAttributeName]}</label>" : "";
             var outpuHtml = $@"
                     {htmlText}
                     <div class='layui-input-inline'>
                         <button id='btn_{For.Name}_up' type='button' class='layui-btn' >上传图片</button>
-                <img class='layui-upload-img' id='{For.Name}_imgs1' src='{value}' style='max-width:200px' />
+                <img class='layui-upload-img' id='{For.Name}_imgs1' src='{showUrl}' style='max-width:200px' />
                 <p id='{For.Name}_retry'></p>
                 <input  id='{For.Name}_imgs2' type = 'hidden' value='{value}' name='{For.Name}'>
-                <div>请上传100px*100px的图片</div>
                     </div>";
 
-            var idStr = TagBuilder.CreateSanitizedId(For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
+                _generator.IdAttributeDotReplacement);
 
             output.TagName = "div";
             output.TagMode = TagMode.StartTagAndEndTag;

@@ -72,7 +72,8 @@ namespace Sikiro.Web.Admin.Tags
             if (!DefaultText.IsNullOrWhiteSpace())
                 selectListItems.Insert(0, new SelectListItem { Text = DefaultText, Value = "" });
 
-            var idStr = TagBuilder.CreateSanitizedId(For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
+                _generator.IdAttributeDotReplacement);
             var attributes = new Dictionary<string, object>
             {
                 {"xm-select",idStr},
@@ -108,7 +109,7 @@ namespace Sikiro.Web.Admin.Tags
             {
                 output.PostElement.SetHtmlContent($@"<script type='text/javascript'>
                  $(function () {{
-                    $('#{idStr}').bindMultiSelectData('{Url}','{jsValue}','{idStr}');
+                    $('#{idStr}').bindMultiSelectData('{Url}','{jsValue}','{idStr}','{DefaultText ?? ""}');
                     }});
                 </script>");
             }

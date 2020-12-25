@@ -62,7 +62,8 @@ namespace Sikiro.Web.Admin.Tags
             if (kvList == null && Data != null)
                 selectListItems = (List<SelectListItem>)Data;
 
-            var idStr = TagBuilder.CreateSanitizedId( For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
+                _generator.IdAttributeDotReplacement);
 
             var tagBuilder = new StringBuilder(32);
             selectListItems.ForEach(item =>

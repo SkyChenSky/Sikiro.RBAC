@@ -44,7 +44,7 @@ namespace Sikiro.Web.Admin.Controllers
         }
 
         [Permission(PermCode.Administrator_List)]
-        public IActionResult List(Models.PageListParams<ListSearchParams> model)
+        public IActionResult List(PageListParams<ListSearchParams> model)
         {
             var where = ExpressionBuilder.Init<Administrator>();
             var param = model.Params;

@@ -72,7 +72,6 @@ namespace Sikiro.Web.Admin.Tags
             {
                 value = ((DateTime)value).ToString(DateTimeType.GetDisplayName());
             }
-
             var inputTagBuilder = _generator.GenerateTextBox(ViewContext,
                 modelExplorer,
                 For.Name,
@@ -80,14 +79,18 @@ namespace Sikiro.Web.Admin.Tags
                 Format,
                 attributes);
 
-            output.TagName = "div";
-            output.TagMode = TagMode.StartTagAndEndTag;
-            output.Content.SetHtmlContent(inputTagBuilder);
-            output.Attributes.Add("class", InputDisplay.GetDisplayName());
+
 
             var dateTimeTypeStr = DateTimeType.ToString();
             var idStr = TagBuilder.CreateSanitizedId(For.Name,
                 _generator.IdAttributeDotReplacement);
+
+            output.TagName = "div";
+            output.TagMode = TagMode.StartTagAndEndTag;
+            output.Attributes.Add("id", $"{idStr}_div");
+            output.Attributes.Add("class", InputDisplay.GetDisplayName());
+            output.Content.SetHtmlContent(inputTagBuilder);
+
             output.PostElement.SetHtmlContent($@"<script type='text/javascript'>
              layui.use('laydate',
                     function () {{

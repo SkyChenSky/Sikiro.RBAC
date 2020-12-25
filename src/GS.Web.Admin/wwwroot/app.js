@@ -19,6 +19,7 @@ $.gsClostLoading = function () {
 
 
 $.ajaxPost = function (url, data, successCallback, failCallback) {
+
     top.layer.load(1, { offset: '300px' });
     $.ajax({
         type: "POST",
@@ -221,7 +222,7 @@ $.fn.extend({
             }
         });
     },
-    bindSelectData: function (url, value) {
+    bindSelectData: function (url, value, defaultText) {
         var $self = $(this);
         if (!$self.is('select')) {
             throw new Error('bindSelectData\'s extension requires select tag');
@@ -229,18 +230,22 @@ $.fn.extend({
         $.getJSON(url, { value: value }).done(function (d) {
             var html = "";
 
+            if (defaultText && defaultText != "") {
+                html += '<option  value="">' + defaultText + '</option>';
+            }
+
             if (d && d.length > 0) {
                 $.each(d, function (i, v) {
                     html += '<option ' + (v.selected === true ? 'selected="selected"' : '') + ' value="' + v.value + '">' + v.text + '</option>';
                 });
             }
 
-            $self.append(html);
+            $self.html(html);
 
             layui.form.render('select');
         });
     },
-    bindMultiSelectData: function (url, value, idStr) {
+    bindMultiSelectData: function (url, value, idStr, defaultText) {
 
         var $self = $(this);
         if (!$self.is('select')) {
@@ -251,13 +256,17 @@ $.fn.extend({
         $.getJSON(url + "?" + qwe, null).done(function (d) {
             var html = "";
 
+            if (defaultText && defaultText != "") {
+                html += '<option  value="">' + defaultText + '</option>';
+            }
+
             if (d && d.length > 0) {
                 $.each(d, function (i, v) {
                     html += '<option ' + (v.selected === true ? 'selected="selected"' : '') + ' value="' + v.value + '">' + v.text + '</option>';
                 });
             }
 
-            $self.append(html);
+            $self.html(html);
 
             layui.formSelects.render(idStr);
         });

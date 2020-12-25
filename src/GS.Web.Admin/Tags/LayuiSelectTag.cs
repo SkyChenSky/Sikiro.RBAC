@@ -71,7 +71,8 @@ namespace Sikiro.Web.Admin.Tags
             if (!DefaultText.IsNullOrWhiteSpace())
                 selectListItems.Insert(0, new SelectListItem { Text = DefaultText, Value = "" });
 
-            var idStr = TagBuilder.CreateSanitizedId( For.Name, _generator.IdAttributeDotReplacement);
+            var idStr = TagBuilder.CreateSanitizedId(For.Name,
+                _generator.IdAttributeDotReplacement);
             var attributes = new Dictionary<string, object>
             {
                 {"lay-search", ""},
@@ -102,7 +103,7 @@ namespace Sikiro.Web.Admin.Tags
             {
                 output.PostElement.SetHtmlContent($@"<script type='text/javascript'>
                  $(function () {{
-                    $('#{idStr}').bindSelectData('{Url}','{For.Model}');
+                    $('#{idStr}').bindSelectData('{Url}','{For.Model}','{DefaultText ?? ""}');
                     }});
                 </script>");
             }
