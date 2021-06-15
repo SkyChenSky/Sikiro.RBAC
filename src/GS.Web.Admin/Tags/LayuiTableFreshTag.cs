@@ -48,7 +48,7 @@ namespace Sikiro.Web.Admin.Tags
                table.reload('{TargetFormId}', {{
                    where: field,
                    page: {{
-                          curr: 1 
+                          curr: $('.layui-laypage-em').next().html() 
                      }}
                }});
            }});
